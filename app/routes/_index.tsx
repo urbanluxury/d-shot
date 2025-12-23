@@ -82,7 +82,7 @@ function HeroSection() {
           playsInline
           className="absolute w-full h-full object-cover"
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src="https://d-shot.b-cdn.net/hero-video.mp4" type="video/mp4" />
         </video>
       </div>
       <div className="hero-overlay"></div>
