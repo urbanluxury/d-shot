@@ -25,9 +25,10 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}, heroData] = await Promise.all([
+  const [{collections}, heroData, featuredSectionData] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
     context.storefront.query(HERO_SETTINGS_QUERY),
+    context.storefront.query(FEATURED_SECTION_QUERY),
   ]);
 
   // Extract hero settings from metaobject
@@ -42,9 +43,38 @@ async function loadCriticalData({context}: Route.LoaderArgs) {
       )
     : null;
 
+  // Extract featured section settings - find the one with section_id = 'homepage_products'
+  const allSections = featuredSectionData?.metaobjects?.nodes || [];
+  const featuredSectionMetaobject = allSections.find(
+    (node: {fields: {key: string; value?: string | null}[]}) => {
+      const sectionIdField = node.fields.find((f: {key: string}) => f.key === 'section_id');
+      return sectionIdField?.value === 'homepage_products';
+    },
+  );
+  const featuredSection = featuredSectionMetaobject
+    ? featuredSectionMetaobject.fields.reduce(
+        (acc: Record<string, string>, field: {key: string; value?: string | null}) => {
+          acc[field.key] = field.value || '';
+          return acc;
+        },
+        {},
+      )
+    : null;
+
+  // Load products from the configured collection (if set)
+  let featuredProducts = null;
+  if (featuredSection?.collection_handle) {
+    const {collection} = await context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
+      variables: {handle: featuredSection.collection_handle, first: 8},
+    });
+    featuredProducts = collection?.products?.nodes || null;
+  }
+
   return {
     featuredCollection: collections.nodes[0],
     heroSettings,
+    featuredSection,
+    featuredProducts,
   };
 }
 
@@ -73,7 +103,11 @@ export default function Homepage() {
       <ShopCategories />
 
       {/* Featured Products */}
-      <FeaturedProducts products={data.recommendedProducts} />
+      <FeaturedProducts
+        products={data.recommendedProducts}
+        featuredProducts={data.featuredProducts}
+        sectionSettings={data.featuredSection}
+      />
 
       {/* About Teaser */}
       <AboutTeaser />
@@ -249,17 +283,59 @@ function ShopCategories() {
   );
 }
 
+interface FeaturedSection {
+  section_id?: string;
+  collection_handle?: string;
+  title?: string;
+  subtitle?: string;
+}
+
 function FeaturedProducts({
   products,
+  featuredProducts,
+  sectionSettings,
 }: {
   products: Promise<RecommendedProductsQuery | null>;
+  featuredProducts: RecommendedProductsQuery['products']['nodes'] | null;
+  sectionSettings: FeaturedSection | null;
 }) {
+  // Use configured title/subtitle or defaults
+  const title = sectionSettings?.title || 'New Arrivals';
+  const subtitle = sectionSettings?.subtitle || 'Fresh drops from the vault';
+  const collectionHandle = sectionSettings?.collection_handle || 'all';
+
+  // If we have featured products from a specific collection, show those
+  if (featuredProducts && featuredProducts.length > 0) {
+    return (
+      <section className="section">
+        <div className="container">
+          <div className="section-header">
+            <h2 className="section-title">{title}</h2>
+            <p className="section-subtitle">{subtitle}</p>
+          </div>
+
+          <div className="product-grid">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link to={`/collections/${collectionHandle}`} className="btn-outline">
+              View All Products
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Fallback to recommended products
   return (
     <section className="section">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">New Arrivals</h2>
-          <p className="section-subtitle">Fresh drops from the vault</p>
+          <h2 className="section-title">{title}</h2>
+          <p className="section-subtitle">{subtitle}</p>
         </div>
 
         <Suspense fallback={<ProductGridSkeleton />}>
@@ -473,6 +549,46 @@ const HERO_SETTINGS_QUERY = `#graphql
       fields {
         key
         value
+      }
+    }
+  }
+` as const;
+
+const FEATURED_SECTION_QUERY = `#graphql
+  query FeaturedSection {
+    metaobjects(type: "featured_section", first: 10) {
+      nodes {
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
+` as const;
+
+const COLLECTION_PRODUCTS_QUERY = `#graphql
+  query CollectionProducts($handle: String!, $first: Int!) {
+    collection(handle: $handle) {
+      products(first: $first) {
+        nodes {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
       }
     }
   }

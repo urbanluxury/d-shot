@@ -372,6 +372,46 @@ export type HeroSettingsQuery = {
   }>;
 };
 
+export type FeaturedSectionQueryVariables = StorefrontAPI.Exact<{
+  [key: string]: never;
+}>;
+
+export type FeaturedSectionQuery = {
+  metaobjects: {
+    nodes: Array<{
+      fields: Array<Pick<StorefrontAPI.MetaobjectField, 'key' | 'value'>>;
+    }>;
+  };
+};
+
+export type CollectionProductsQueryVariables = StorefrontAPI.Exact<{
+  handle: StorefrontAPI.Scalars['String']['input'];
+  first: StorefrontAPI.Scalars['Int']['input'];
+}>;
+
+export type CollectionProductsQuery = {
+  collection?: StorefrontAPI.Maybe<{
+    products: {
+      nodes: Array<
+        Pick<StorefrontAPI.Product, 'id' | 'title' | 'handle'> & {
+          priceRange: {
+            minVariantPrice: Pick<
+              StorefrontAPI.MoneyV2,
+              'amount' | 'currencyCode'
+            >;
+          };
+          featuredImage?: StorefrontAPI.Maybe<
+            Pick<
+              StorefrontAPI.Image,
+              'id' | 'url' | 'altText' | 'width' | 'height'
+            >
+          >;
+        }
+      >;
+    };
+  }>;
+};
+
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
   articleHandle: StorefrontAPI.Scalars['String']['input'];
   blogHandle: StorefrontAPI.Scalars['String']['input'];
@@ -1231,6 +1271,14 @@ interface GeneratedQueryTypes {
   '#graphql\n  query HeroSettings {\n    metaobject(handle: {type: "hero_settings", handle: "homepage"}) {\n      fields {\n        key\n        value\n      }\n    }\n  }\n': {
     return: HeroSettingsQuery;
     variables: HeroSettingsQueryVariables;
+  };
+  '#graphql\n  query FeaturedSection {\n    metaobjects(type: "featured_section", first: 10) {\n      nodes {\n        fields {\n          key\n          value\n        }\n      }\n    }\n  }\n': {
+    return: FeaturedSectionQuery;
+    variables: FeaturedSectionQueryVariables;
+  };
+  '#graphql\n  query CollectionProducts($handle: String!, $first: Int!) {\n    collection(handle: $handle) {\n      products(first: $first) {\n        nodes {\n          id\n          title\n          handle\n          priceRange {\n            minVariantPrice {\n              amount\n              currencyCode\n            }\n          }\n          featuredImage {\n            id\n            url\n            altText\n            width\n            height\n          }\n        }\n      }\n    }\n  }\n': {
+    return: CollectionProductsQuery;
+    variables: CollectionProductsQueryVariables;
   };
   '#graphql\n  query Article(\n    $articleHandle: String!\n    $blogHandle: String!\n    $country: CountryCode\n    $language: LanguageCode\n  ) @inContext(language: $language, country: $country) {\n    blog(handle: $blogHandle) {\n      handle\n      articleByHandle(handle: $articleHandle) {\n        handle\n        title\n        contentHtml\n        publishedAt\n        author: authorV2 {\n          name\n        }\n        image {\n          id\n          altText\n          url\n          width\n          height\n        }\n        seo {\n          description\n          title\n        }\n      }\n    }\n  }\n': {
     return: ArticleQuery;
