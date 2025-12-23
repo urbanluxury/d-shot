@@ -74,18 +74,18 @@ function HeroSection() {
   return (
     <section className="hero">
       {/* Background Video */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute w-full h-full object-cover"
+          className="w-full h-full object-cover"
         >
           <source src="https://d-shot.b-cdn.net/hero-video.mp4" type="video/mp4" />
         </video>
       </div>
-      <div className="hero-overlay"></div>
+      <div className="hero-overlay z-[1]"></div>
 
       <div className="hero-content">
         <p className="text-white uppercase tracking-[0.3em] mb-4 text-sm font-semibold animate-fade-in">
