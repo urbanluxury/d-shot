@@ -1,4 +1,4 @@
-import {Link} from 'react-router';
+import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/tour';
 import {PageHero} from '~/components/PageHero';
 
@@ -13,55 +13,88 @@ export const meta: Route.MetaFunction = () => {
   ];
 };
 
+interface EventFields {
+  date?: string;
+  venue?: string;
+  city?: string;
+  ticket_url?: string;
+  status?: string;
+}
+
+interface Event {
+  id: string;
+  date: string;
+  year: string;
+  venue: string;
+  city: string;
+  ticketUrl: string;
+  status: string;
+}
+
+export async function loader({context}: Route.LoaderArgs) {
+  const {metaobjects} = await context.storefront.query(EVENTS_QUERY);
+
+  // Transform metaobject data into usable format
+  const events: Event[] =
+    metaobjects?.nodes?.map(
+      (node: {id: string; fields: {key: string; value?: string | null}[]}) => {
+        const fields = node.fields.reduce(
+          (acc: EventFields, field: {key: string; value?: string | null}) => {
+            acc[field.key as keyof EventFields] = field.value || '';
+            return acc;
+          },
+          {} as EventFields,
+        );
+
+        // Parse date string to extract month/day and year
+        const dateObj = fields.date ? new Date(fields.date) : new Date();
+        const monthDay = dateObj
+          .toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
+          .toUpperCase();
+        const year = dateObj.getFullYear().toString();
+
+        return {
+          id: node.id,
+          date: monthDay,
+          year: year,
+          venue: fields.venue || 'TBA',
+          city: fields.city || 'TBA',
+          ticketUrl: fields.ticket_url || '#',
+          status: fields.status || 'on-sale',
+        };
+      },
+    ) || [];
+
+  return {events};
+}
+
 export default function Tour() {
-  // Sample tour dates - in production these would come from a CMS or API
-  const upcomingShows = [
-    {
-      id: 1,
-      date: 'JAN 15',
-      year: '2025',
-      venue: 'The Fillmore',
-      city: 'San Francisco, CA',
-      ticketUrl: '#',
-      status: 'on-sale',
-    },
-    {
-      id: 2,
-      date: 'JAN 22',
-      year: '2025',
-      venue: 'Fox Theater',
-      city: 'Oakland, CA',
-      ticketUrl: '#',
-      status: 'on-sale',
-    },
-    {
-      id: 3,
-      date: 'FEB 5',
-      year: '2025',
-      venue: 'The Warfield',
-      city: 'San Francisco, CA',
-      ticketUrl: '#',
-      status: 'low-tickets',
-    },
-    {
-      id: 4,
-      date: 'FEB 14',
-      year: '2025',
-      venue: 'House of Blues',
-      city: 'Los Angeles, CA',
-      ticketUrl: '#',
-      status: 'on-sale',
-    },
-    {
-      id: 5,
-      date: 'MAR 1',
-      year: '2025',
-      venue: 'The Regency Ballroom',
-      city: 'San Francisco, CA',
-      ticketUrl: '#',
-      status: 'sold-out',
-    },
-  ];
+  const {events} = useLoaderData<typeof loader>();
+
+  // Use fetched events or fallback to sample data if none exist
+  const upcomingShows =
+    events.length > 0
+      ? events
+      : [
+          {
+            id: '1',
+            date: 'JAN 15',
+            year: '2025',
+            venue: 'The Fillmore',
+            city: 'San Francisco, CA',
+            ticketUrl: '#',
+            status: 'on-sale',
+          },
+          {
+            id: '2',
+            date: 'JAN 22',
+            year: '2025',
+            venue: 'Fox Theater',
+            city: 'Oakland, CA',
+            ticketUrl: '#',
+            status: 'on-sale',
+          },
+        ];
 
   return (
     <div className="tour-page">
@@ -216,3 +249,17 @@ export default function Tour() {
     </div>
   );
 }
+
+const EVENTS_QUERY = `#graphql
+  query Events {
+    metaobjects(type: "event", first: 20, sortKey: "date") {
+      nodes {
+        id
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
+` as const;

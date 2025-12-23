@@ -25,12 +25,26 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}] = await Promise.all([
+  const [{collections}, heroData] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
+    context.storefront.query(HERO_SETTINGS_QUERY),
   ]);
+
+  // Extract hero settings from metaobject
+  const heroMetaobject = heroData?.metaobject;
+  const heroSettings = heroMetaobject
+    ? heroMetaobject.fields.reduce(
+        (acc: Record<string, string>, field: {key: string; value: string}) => {
+          acc[field.key] = field.value;
+          return acc;
+        },
+        {},
+      )
+    : null;
 
   return {
     featuredCollection: collections.nodes[0],
+    heroSettings,
   };
 }
 
@@ -53,7 +67,7 @@ export default function Homepage() {
   return (
     <div className="home">
       {/* Hero Section */}
-      <HeroSection />
+      <HeroSection heroSettings={data.heroSettings} />
 
       {/* Shop Categories */}
       <ShopCategories />
@@ -70,7 +84,21 @@ export default function Homepage() {
   );
 }
 
-function HeroSection() {
+interface HeroSettings {
+  video_url?: string;
+  heading?: string;
+  subheading?: string;
+  button_text?: string;
+  button_link?: string;
+}
+
+function HeroSection({heroSettings}: {heroSettings: HeroSettings | null}) {
+  // Use metaobject values with fallbacks
+  const videoUrl = heroSettings?.video_url || 'https://d-shot.b-cdn.net/hero-video.mp4';
+  const heading = heroSettings?.heading || 'Bay Area Legend';
+  const buttonText = heroSettings?.button_text || 'Shop Now';
+  const buttonLink = heroSettings?.button_link || '/collections/all';
+
   return (
     <section className="hero">
       {/* Background Video */}
@@ -82,14 +110,14 @@ function HeroSection() {
           playsInline
           className="w-full h-full object-cover"
         >
-          <source src="https://d-shot.b-cdn.net/hero-video.mp4" type="video/mp4" />
+          <source src={videoUrl} type="video/mp4" />
         </video>
       </div>
       <div className="hero-overlay z-[1]"></div>
 
       <div className="hero-content">
         <p className="text-white uppercase tracking-[0.3em] mb-4 text-sm font-semibold animate-fade-in">
-          Bay Area Legend
+          {heading}
         </p>
         <img
           src="/dshot-logo.png"
@@ -100,8 +128,8 @@ function HeroSection() {
           className="flex flex-col sm:flex-row gap-4 justify-center mt-8 animate-slide-up"
           style={{animationDelay: '0.2s'}}
         >
-          <Link to="/collections/all" className="btn-primary">
-            Shop Now
+          <Link to={buttonLink} className="btn-primary">
+            {buttonText}
           </Link>
           <Link to="/music" className="btn-outline">
             Listen
@@ -434,6 +462,17 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     products(first: 8, sortKey: UPDATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
+      }
+    }
+  }
+` as const;
+
+const HERO_SETTINGS_QUERY = `#graphql
+  query HeroSettings {
+    metaobject(handle: {type: "hero_settings", handle: "homepage"}) {
+      fields {
+        key
+        value
       }
     }
   }
