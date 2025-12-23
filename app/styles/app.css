@@ -1,0 +1,436 @@
+@import 'tailwindcss';
+
+/* D-Shot Brand Theme */
+@theme {
+  /* Brand Colors */
+  --color-merlot: #722F37;
+  --color-merlot-dark: #5a252c;
+  --color-merlot-light: #8a3942;
+  --color-champagne: #F7E7CE;
+  --color-champagne-dark: #e8d4b5;
+  --color-champagne-light: #fdf5e8;
+  --color-black: #0A0A0A;
+  --color-dark: #111111;
+  --color-dark-gray: #1A1A1A;
+  --color-gray: #2D2D2D;
+  --color-gray-light: #4A4A4A;
+  --color-white: #FFFFFF;
+  --color-off-white: #F5F5F5;
+
+  /* Font Families */
+  --font-display: 'Bebas Neue', 'Oswald', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Spacing */
+  --header-height: 80px;
+  --aside-width: 400px;
+  --container-max: 1400px;
+
+  /* Animations */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-black text-white font-sans antialiased;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-display uppercase tracking-wide;
+}
+
+a {
+  @apply transition-colors duration-200;
+}
+
+/* Selection */
+::selection {
+  @apply bg-merlot text-white;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-dark;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-light;
+}
+
+/* Focus States */
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-merlot;
+}
+
+/* Container Utility */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: var(--container-max);
+}
+
+/* Button Base Styles */
+.btn {
+  @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200 bg-merlot text-white hover:bg-merlot-dark active:bg-merlot-dark;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200 bg-champagne text-black hover:bg-champagne-dark active:bg-champagne-dark;
+}
+
+.btn-outline {
+  @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200 border-2 border-white text-white hover:bg-white hover:text-black;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-dark-gray rounded-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02];
+}
+
+/* Product Grid */
+.product-grid {
+  @apply grid gap-4 sm:gap-6;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* Aside / Cart Drawer */
+aside {
+  background: var(--color-dark);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  height: 100vh;
+  width: min(var(--aside-width), 100vw);
+  position: fixed;
+  right: calc(-1 * var(--aside-width));
+  top: 0;
+  transition: transform 200ms ease-in-out;
+  z-index: 50;
+}
+
+aside header {
+  @apply flex items-center justify-between h-20 px-5 border-b border-gray;
+}
+
+aside header h3 {
+  @apply m-0 text-xl font-display uppercase;
+}
+
+aside header .close {
+  @apply font-bold opacity-80 hover:opacity-100 transition-opacity;
+}
+
+aside main {
+  @apply p-5 overflow-y-auto;
+  max-height: calc(100vh - 80px);
+}
+
+/* Overlay */
+.overlay {
+  @apply fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 z-40;
+  visibility: hidden;
+}
+
+.overlay.expanded {
+  @apply opacity-100 pointer-events-auto;
+  visibility: visible;
+}
+
+.overlay.expanded aside {
+  transform: translateX(calc(var(--aside-width) * -1));
+}
+
+.overlay .close-outside {
+  @apply absolute inset-0 bg-transparent border-none cursor-pointer;
+  width: calc(100% - var(--aside-width));
+}
+
+/* Header */
+.header {
+  @apply fixed top-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-sm border-b border-gray/30;
+  height: var(--header-height);
+}
+
+.header-inner {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between;
+  max-width: var(--container-max);
+}
+
+.header-logo {
+  @apply text-2xl font-display uppercase tracking-widest text-champagne hover:text-merlot transition-colors;
+}
+
+.header-nav {
+  @apply hidden lg:flex items-center gap-8;
+}
+
+.header-nav a {
+  @apply text-sm uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
+}
+
+.header-ctas {
+  @apply flex items-center gap-4;
+}
+
+.header-icon {
+  @apply p-2 transition-colors;
+}
+
+.nav-link {
+  @apply text-sm uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
+}
+
+.header-menu-mobile {
+  @apply flex flex-col gap-6 py-4;
+}
+
+.header-menu-mobile .nav-link {
+  @apply text-xl;
+}
+
+/* Footer */
+.footer {
+  @apply bg-dark mt-auto border-t border-gray/30;
+}
+
+.footer-inner {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 py-12;
+  max-width: var(--container-max);
+}
+
+.footer-grid {
+  @apply grid gap-8 md:grid-cols-2 lg:grid-cols-4;
+}
+
+.footer-heading {
+  @apply text-champagne text-lg font-display uppercase mb-4;
+}
+
+.footer-links a {
+  @apply block text-white/60 hover:text-champagne transition-colors py-1;
+}
+
+.footer-bottom {
+  @apply border-t border-gray/30 mt-8 pt-8 text-center text-white/40 text-sm;
+}
+
+.footer-logo {
+  @apply text-3xl font-display uppercase tracking-widest text-champagne hover:text-merlot transition-colors;
+}
+
+/* Product Card */
+.product-card {
+  @apply bg-dark-gray rounded-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02] cursor-pointer;
+}
+
+.product-card-image {
+  @apply aspect-square overflow-hidden bg-gray;
+}
+
+.product-card-image img {
+  @apply w-full h-full object-cover transition-transform duration-500;
+}
+
+.product-card:hover .product-card-image img {
+  @apply scale-110;
+}
+
+.product-card-info {
+  @apply p-4;
+}
+
+.product-card-title {
+  @apply text-lg font-display uppercase text-white transition-colors;
+}
+
+.product-card:hover .product-card-title {
+  @apply text-champagne;
+}
+
+.product-card-price {
+  @apply text-merlot font-semibold mt-1;
+}
+
+/* Page Content - padding for fixed header */
+main {
+  padding-top: var(--header-height);
+}
+
+/* Home page hero removes padding since it's full-screen */
+.home {
+  margin-top: calc(-1 * var(--header-height));
+}
+
+/* Hero Section */
+.hero {
+  @apply relative min-h-screen flex items-center justify-center overflow-hidden;
+}
+
+.hero-bg {
+  @apply absolute inset-0 bg-cover bg-center;
+}
+
+.hero-overlay {
+  @apply absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black;
+}
+
+.hero-content {
+  @apply relative z-10 text-center mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: var(--container-max);
+}
+
+.hero-title {
+  @apply text-5xl md:text-7xl lg:text-8xl font-display uppercase text-white mb-4;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8), 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  @apply text-xl md:text-2xl text-champagne mb-8 font-light;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Section Styles */
+.section {
+  @apply py-16 md:py-24;
+}
+
+.section-header {
+  @apply mb-12 text-center;
+}
+
+.section-title {
+  @apply text-3xl md:text-5xl font-display uppercase text-white mb-4;
+}
+
+.section-subtitle {
+  @apply text-lg text-white/60;
+}
+
+/* Cart Styles */
+.cart-line {
+  @apply flex gap-4 py-4 border-b border-gray;
+}
+
+.cart-line img {
+  @apply w-24 h-24 object-cover rounded;
+}
+
+.cart-line-info {
+  @apply flex-1;
+}
+
+.cart-summary {
+  @apply bg-dark-gray rounded-lg p-6 mt-6;
+}
+
+/* Form Styles */
+.input {
+  @apply w-full bg-dark border border-gray rounded px-4 py-3 text-white placeholder-white/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors;
+}
+
+.label {
+  @apply block text-sm uppercase tracking-wider text-white/60 mb-2;
+}
+
+/* Badge */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase;
+}
+
+.badge-merlot {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase bg-merlot text-white;
+}
+
+.badge-champagne {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase bg-champagne text-black;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  @apply fixed inset-0 bg-black z-50 flex flex-col p-6;
+  transform: translateX(-100%);
+  transition: transform 300ms ease;
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+.mobile-menu-nav {
+  @apply flex-1 flex flex-col items-center justify-center gap-6;
+}
+
+.mobile-menu-nav a {
+  @apply text-2xl font-display uppercase text-white hover:text-champagne transition-colors;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease forwards;
+}
+
+/* Utility: Hide scrollbar */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Legacy styles for skeleton components (to be refactored) */
+button.reset {
+  border: 0;
+  background: inherit;
+  font-size: inherit;
+}
+
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Prevent body scroll when overlay is open */
+@media (max-width: 45em) {
+  html:has(.overlay.expanded) {
+    overflow: hidden;
+  }
+}

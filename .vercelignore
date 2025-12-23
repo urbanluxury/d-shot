@@ -1,0 +1,7 @@
+# Large files - host separately
+public/hero-video.mp4
+*.mp4
+
+# Dev files
+node_modules
+.env.local

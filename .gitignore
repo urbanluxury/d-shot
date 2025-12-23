@@ -1,0 +1,11 @@
+node_modules
+dist
+.idea
+.vscode
+/.DS_Store
+
+.shopify
+.vercel
+.env*.local
+*.mp4
+Screenshot*.png
