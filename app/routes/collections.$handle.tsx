@@ -1,46 +1,36 @@
-import {redirect, useLoaderData, Link, useParams} from 'react-router';
+import {useState} from 'react';
+import {redirect, useLoaderData, Link, useParams, useSearchParams, useNavigate} from 'react-router';
 import type {Route} from './+types/collections.$handle';
-import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {getPaginationVariables, Analytics, Image, Money} from '@shopify/hydrogen';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
-import {ProductItem} from '~/components/ProductItem';
 import {PageHero} from '~/components/PageHero';
-import type {ProductItemFragment} from 'storefrontapi.generated';
+import {ProductFilters, extractFiltersFromProducts, filterProducts} from '~/components/ProductFilters';
 
 export const meta: Route.MetaFunction = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  return [{title: `D-Shot | ${data?.collection.title ?? ''} Collection`}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 8,
+    pageBy: 50, // Load more for client-side filtering
   });
 
   if (!handle) {
     throw redirect('/collections');
   }
 
-  const [{collection}, {metaobjects: shopCategories}] = await Promise.all([
+  const [{collection}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {handle, ...paginationVariables},
     }),
-    storefront.query(SHOP_CATEGORIES_QUERY),
   ]);
 
   if (!collection) {
@@ -49,40 +39,58 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     });
   }
 
-  // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: collection});
 
-  return {
-    collection,
-    shopCategories,
-  };
+  return {collection};
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
-function loadDeferredData({context}: Route.LoaderArgs) {
+function loadDeferredData(_args: Route.LoaderArgs) {
   return {};
 }
 
 export default function Collection() {
-  const {collection, shopCategories} = useLoaderData<typeof loader>();
+  const {collection} = useLoaderData<typeof loader>();
   const {handle} = useParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // Parse shop categories from metaobject
-  const categories = shopCategories?.nodes?.map((node: any) => {
-    const fields = node.fields.reduce((acc: any, field: any) => {
-      acc[field.key] = field.value;
-      return acc;
-    }, {});
-    return {
-      title: fields.title,
-      handle: fields.collection_handle,
-      order: parseInt(fields.sort_order || '0'),
-    };
-  }).sort((a: any, b: any) => a.order - b.order) || [];
+  // Extract filter options from products
+  const allProducts = collection.products.nodes;
+  const filters = extractFiltersFromProducts(allProducts);
+
+  // Apply client-side filtering
+  const filteredProducts = filterProducts(allProducts, searchParams);
+
+  // Get current sort
+  const currentSort = searchParams.get('sort') || 'featured';
+
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (currentSort) {
+      case 'price-asc':
+        return parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount);
+      case 'price-desc':
+        return parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount);
+      case 'title-asc':
+        return a.title.localeCompare(b.title);
+      case 'title-desc':
+        return b.title.localeCompare(a.title);
+      default:
+        return 0;
+    }
+  });
+
+  // Handle sort change
+  const handleSortChange = (sort: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (sort === 'featured') {
+      newParams.delete('sort');
+    } else {
+      newParams.set('sort', sort);
+    }
+    navigate(`?${newParams.toString()}`, {replace: true});
+  };
 
   return (
     <div className="collection bg-black min-h-screen">
@@ -93,117 +101,154 @@ export default function Collection() {
       />
 
       <div className="container py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters - Hidden on mobile, shown on desktop */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-dark-gray rounded-lg p-6 sticky top-24">
-              <h3 className="text-lg font-display uppercase text-white mb-6">Shop By</h3>
+        {/* Mobile Filter Toggle */}
+        <div className="lg:hidden mb-6 flex items-center justify-between">
+          <button
+            onClick={() => setMobileFiltersOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-dark-gray rounded-lg text-white"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            Filters
+          </button>
+          <select
+            value={currentSort}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className="bg-dark-gray border border-white/20 rounded-lg px-4 py-2 text-white text-sm focus:border-champagne focus:outline-none"
+          >
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="title-asc">Name: A-Z</option>
+            <option value="title-desc">Name: Z-A</option>
+          </select>
+        </div>
 
-              {/* Category Filter */}
-              <div className="mb-6">
+        {/* Mobile Filter Drawer */}
+        {mobileFiltersOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div
+              className="absolute inset-0 bg-black/60"
+              onClick={() => setMobileFiltersOpen(false)}
+            />
+            <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-dark-gray overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-display uppercase text-white">Filters</h2>
+                  <button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="text-white/60 hover:text-white"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Category Links */}
+                <div className="mb-6 pb-6 border-b border-white/10">
+                  <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Categories</h4>
+                  <nav className="space-y-2">
+                    {CATEGORIES.map((cat) => (
+                      <Link
+                        key={cat.handle}
+                        to={`/collections/${cat.handle}`}
+                        onClick={() => setMobileFiltersOpen(false)}
+                        className={`block transition-colors ${
+                          handle === cat.handle
+                            ? 'text-champagne font-medium'
+                            : 'text-white/80 hover:text-champagne'
+                        }`}
+                      >
+                        {cat.title}
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+
+                <ProductFilters
+                  filters={filters}
+                  productCount={sortedProducts.length}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="lg:grid lg:grid-cols-4 gap-8">
+          {/* Desktop Sidebar - 25% width - Always visible on lg screens */}
+          <aside className="hidden lg:block">
+            <div className="bg-dark-gray rounded-lg p-6 sticky top-24">
+              {/* Category Links */}
+              <div className="mb-6 pb-6 border-b border-white/10">
                 <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Categories</h4>
                 <nav className="space-y-2">
-                  <Link
-                    to="/collections/all"
-                    className="block text-white/80 hover:text-champagne transition-colors"
-                  >
-                    All Products
-                  </Link>
-                  <Link
-                    to="/collections/apparel"
-                    className={`block transition-colors ${handle === 'apparel' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    Apparel
-                  </Link>
-                  <Link
-                    to="/collections/music"
-                    className={`block transition-colors ${handle === 'music' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    Music
-                  </Link>
-                  <Link
-                    to="/collections/accessories"
-                    className={`block transition-colors ${handle === 'accessories' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    Accessories
-                  </Link>
-                  <Link
-                    to="/collections/shot-glasses"
-                    className={`block transition-colors ${handle === 'shot-glasses' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    Shot Glasses
-                  </Link>
-                  <Link
-                    to="/collections/exclusives"
-                    className={`block transition-colors ${handle === 'exclusives' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    Exclusives
-                  </Link>
-                  <Link
-                    to="/collections/new-arrivals"
-                    className={`block transition-colors ${handle === 'new-arrivals' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
-                  >
-                    New Arrivals
-                  </Link>
+                  {CATEGORIES.map((cat) => (
+                    <Link
+                      key={cat.handle}
+                      to={`/collections/${cat.handle}`}
+                      className={`block transition-colors ${
+                        handle === cat.handle
+                          ? 'text-champagne font-medium'
+                          : 'text-white/80 hover:text-champagne'
+                      }`}
+                    >
+                      {cat.title}
+                    </Link>
+                  ))}
                 </nav>
               </div>
 
-              {/* Price Filter */}
-              <div className="mb-6">
-                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Price Range</h4>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
-                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
-                    <span>Under $25</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
-                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
-                    <span>$25 - $50</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
-                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
-                    <span>$50 - $100</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
-                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
-                    <span>$100+</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Sort */}
-              <div>
-                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Sort By</h4>
-                <select className="w-full bg-black border border-white/20 rounded-md px-3 py-2 text-white text-sm focus:border-champagne focus:outline-none">
-                  <option>Featured</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                  <option>Newest</option>
-                </select>
-              </div>
+              <ProductFilters
+                filters={filters}
+                productCount={sortedProducts.length}
+              />
             </div>
           </aside>
 
-          {/* Product Grid */}
-          <div className="flex-1">
-            <div className="flex justify-between items-center mb-6">
+          {/* Product Grid - 75% width */}
+          <div className="lg:col-span-3">
+            {/* Desktop Header */}
+            <div className="hidden lg:flex justify-between items-center mb-6">
               <p className="text-white/60">
-                {collection.products.nodes.length} products
+                {sortedProducts.length} {sortedProducts.length === 1 ? 'product' : 'products'}
               </p>
+              <select
+                value={currentSort}
+                onChange={(e) => handleSortChange(e.target.value)}
+                className="bg-dark-gray border border-white/20 rounded-lg px-4 py-2 text-white text-sm focus:border-champagne focus:outline-none"
+              >
+                <option value="featured">Sort: Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="title-asc">Name: A-Z</option>
+                <option value="title-desc">Name: Z-A</option>
+              </select>
             </div>
 
-            <PaginatedResourceSection<ProductItemFragment>
-              connection={collection.products}
-              resourcesClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {({node: product, index}) => (
-                <ProductItem
-                  key={product.id}
-                  product={product}
-                  loading={index < 8 ? 'eager' : undefined}
-                />
-              )}
-            </PaginatedResourceSection>
+            {/* Products */}
+            {sortedProducts.length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                {sortedProducts.map((product: any, index: number) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    loading={index < 8 ? 'eager' : 'lazy'}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-white/60 text-lg mb-4">No products match your filters</p>
+                <button
+                  onClick={() => navigate(`/collections/${handle}`)}
+                  className="text-champagne hover:underline"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -220,6 +265,46 @@ export default function Collection() {
   );
 }
 
+function ProductCard({product, loading}: {product: any; loading: 'eager' | 'lazy'}) {
+  return (
+    <Link to={`/products/${product.handle}`} className="group">
+      <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden mb-3">
+        {product.featuredImage ? (
+          <Image
+            alt={product.featuredImage.altText || product.title}
+            data={product.featuredImage}
+            loading={loading}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-white/20">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        )}
+      </div>
+      <h3 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors line-clamp-2">
+        {product.title}
+      </h3>
+      <p className="text-champagne font-display mt-1">
+        <Money data={product.priceRange.minVariantPrice} />
+      </p>
+    </Link>
+  );
+}
+
+const CATEGORIES = [
+  {title: 'All Products', handle: 'all'},
+  {title: 'Apparel', handle: 'apparel'},
+  {title: 'Music', handle: 'music'},
+  {title: 'Accessories', handle: 'accessories'},
+  {title: 'Shot Glasses', handle: 'shot-glasses'},
+  {title: 'Exclusives', handle: 'exclusives'},
+  {title: 'New Arrivals', handle: 'new-arrivals'},
+];
+
 const PRODUCT_ITEM_FRAGMENT = `#graphql
   fragment MoneyProductItem on MoneyV2 {
     amount
@@ -229,6 +314,9 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
+    tags
+    productType
+    vendor
     featuredImage {
       id
       altText
@@ -244,10 +332,17 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
         ...MoneyProductItem
       }
     }
+    variants(first: 10) {
+      nodes {
+        selectedOptions {
+          name
+          value
+        }
+      }
+    }
   }
 ` as const;
 
-// NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
 const COLLECTION_QUERY = `#graphql
   ${PRODUCT_ITEM_FRAGMENT}
   query Collection(
@@ -278,20 +373,6 @@ const COLLECTION_QUERY = `#graphql
           hasNextPage
           endCursor
           startCursor
-        }
-      }
-    }
-  }
-` as const;
-
-const SHOP_CATEGORIES_QUERY = `#graphql
-  query ShopCategories {
-    metaobjects(type: "shop_category", first: 20) {
-      nodes {
-        handle
-        fields {
-          key
-          value
         }
       }
     }
