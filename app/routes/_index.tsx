@@ -128,7 +128,7 @@ interface HeroSettings {
 
 function HeroSection({heroSettings}: {heroSettings: HeroSettings | null}) {
   // Use metaobject values with fallbacks
-  const videoUrl = heroSettings?.video_url || 'https://d-shot.b-cdn.net/hero-video.mp4';
+  const videoUrl = heroSettings?.video_url || '/hero-video-compressed.mp4';
   const heading = heroSettings?.heading || 'Bay Area Legend';
   const buttonText = heroSettings?.button_text || 'Shop Now';
   const buttonLink = heroSettings?.button_link || '/collections/all';
@@ -136,12 +136,14 @@ function HeroSection({heroSettings}: {heroSettings: HeroSettings | null}) {
   return (
     <section className="hero">
       {/* Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         <video
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          poster="/hero-poster.jpg"
           className="w-full h-full object-cover"
         >
           <source src={videoUrl} type="video/mp4" />

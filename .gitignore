@@ -7,5 +7,8 @@ dist
 .shopify
 .vercel
 .env*.local
-*.mp4
+# *.mp4 - removed, using compressed version
 Screenshot*.png
+public/hero-video.mp4
+*.mp4
+!public/hero-video-compressed.mp4

@@ -8,15 +8,17 @@ export function PageHero({title, subtitle, label}: PageHeroProps) {
   return (
     <section className="relative py-32 md:py-40 overflow-hidden">
       {/* Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden bg-black">
         <video
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
+          poster="/hero-poster.jpg"
           className="w-full h-full object-cover"
         >
-          <source src="https://d-shot.b-cdn.net/hero-video.mp4" type="video/mp4" />
+          <source src="/hero-video-compressed.mp4" type="video/mp4" />
         </video>
       </div>
       {/* Overlay */}
