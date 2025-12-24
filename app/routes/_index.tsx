@@ -112,8 +112,8 @@ export default function Homepage() {
       {/* About Teaser */}
       <AboutTeaser />
 
-      {/* Latest Drop Banner */}
-      <LatestDropBanner collection={data.featuredCollection} />
+      {/* D-Shot Glasses Promo */}
+      <ShotGlassesPromo />
     </div>
   );
 }
@@ -450,42 +450,41 @@ function AboutTeaser() {
   );
 }
 
-function LatestDropBanner({
-  collection,
-}: {
-  collection: FeaturedCollectionFragment;
-}) {
-  if (!collection) return null;
-
+function ShotGlassesPromo() {
   return (
     <section className="section bg-dark">
       <div className="container">
         <Link
-          to={`/collections/${collection.handle}`}
-          className="block bg-gradient-to-r from-merlot to-merlot-dark rounded-xl overflow-hidden group"
+          to="/collections/shot-glasses"
+          className="block rounded-xl overflow-hidden group relative"
+          style={{backgroundColor: '#722F37'}}
         >
-          <div className="grid lg:grid-cols-2 items-center">
-            <div className="p-8 lg:p-12">
-              <span className="badge-champagne mb-4">New Collection</span>
-              <h2 className="text-3xl md:text-4xl font-display uppercase text-white mt-4 group-hover:text-champagne transition-colors">
-                {collection.title}
+          <div className="grid lg:grid-cols-2 items-center min-h-[400px]">
+            {/* Left Content */}
+            <div className="p-8 lg:p-12 relative z-10">
+              <span className="badge-champagne mb-4">Luxury Collection</span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display uppercase text-champagne mt-4 group-hover:scale-105 transition-transform origin-left">
+                D.Shot
               </h2>
-              <p className="text-white/80 mt-4">
-                Check out the latest exclusive drop from Shot Caller Records.
+              <p className="text-3xl md:text-4xl font-display uppercase text-white mt-2">
+                Shot Glasses
               </p>
-              <span className="btn-outline mt-6 inline-block">
-                Shop Collection
+              <p className="text-white/80 mt-4 text-lg">
+                Premium luxury shot glasses. Elevate your drinking experience.
+              </p>
+              <span className="btn-primary mt-6 inline-block bg-champagne text-black hover:bg-white">
+                Coming Soon
               </span>
             </div>
-            {collection.image && (
-              <div className="aspect-video lg:aspect-square">
-                <Image
-                  data={collection.image}
-                  sizes="(min-width: 45em) 50vw, 100vw"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+
+            {/* Right Image */}
+            <div className="relative h-full flex items-center justify-center p-8">
+              <img
+                src="/dshot-glasses-promo.png"
+                alt="D-Shot Luxury Shot Glasses"
+                className="max-h-[350px] w-auto object-contain drop-shadow-2xl group-hover:scale-105 transition-transform"
+              />
+            </div>
           </div>
         </Link>
       </div>
