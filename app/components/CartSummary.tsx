@@ -11,25 +11,65 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
-  const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside';
+  const isPage = layout === 'page';
 
   return (
-    <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart?.cost?.subtotalAmount?.amount ? (
-            <Money data={cart?.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
+    <div
+      aria-labelledby="cart-summary"
+      className={`${isPage ? 'bg-dark-gray rounded-lg p-6 h-fit sticky top-24' : 'border-t border-white/10 pt-6 mt-6'}`}
+    >
+      <h4 className="text-xl font-display uppercase text-white mb-6">Order Summary</h4>
+
+      <div className="space-y-3 mb-6">
+        <div className="flex justify-between text-white/70">
+          <span>Subtotal</span>
+          <span className="text-white">
+            {cart?.cost?.subtotalAmount?.amount ? (
+              <Money data={cart?.cost?.subtotalAmount} />
+            ) : (
+              '-'
+            )}
+          </span>
+        </div>
+        <div className="flex justify-between text-white/70">
+          <span>Shipping</span>
+          <span className="text-white/50">Calculated at checkout</span>
+        </div>
+      </div>
+
       <CartDiscounts discountCodes={cart?.discountCodes} />
       <CartGiftCard giftCardCodes={cart?.appliedGiftCards} />
+
+      <div className="border-t border-white/10 pt-4 mt-4 mb-6">
+        <div className="flex justify-between text-lg">
+          <span className="font-display uppercase text-white">Total</span>
+          <span className="text-champagne font-display text-xl">
+            {cart?.cost?.subtotalAmount?.amount ? (
+              <Money data={cart?.cost?.subtotalAmount} />
+            ) : (
+              '-'
+            )}
+          </span>
+        </div>
+      </div>
+
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
+
+      {/* Trust badges */}
+      <div className="flex items-center justify-center gap-4 mt-6 pt-6 border-t border-white/10">
+        <div className="flex items-center gap-1 text-white/40 text-xs">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>Secure</span>
+        </div>
+        <div className="flex items-center gap-1 text-white/40 text-xs">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Verified</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -38,12 +78,13 @@ function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
-      </a>
-      <br />
-    </div>
+    <a
+      href={checkoutUrl}
+      target="_self"
+      className="block w-full py-4 px-8 bg-champagne hover:bg-white text-black font-display uppercase tracking-wider text-center text-lg rounded-md transition-all"
+    >
+      Proceed to Checkout
+    </a>
   );
 }
 
@@ -58,27 +99,37 @@ function CartDiscounts({
       ?.map(({code}) => code) || [];
 
   return (
-    <div>
+    <div className="mb-4">
       {/* Have existing discount, display it with a remove option */}
-      <dl hidden={!codes.length}>
-        <div>
-          <dt>Discount(s)</dt>
+      {codes.length > 0 && (
+        <div className="flex items-center justify-between bg-merlot/20 rounded-md px-3 py-2 mb-3">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-champagne" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <code className="text-champagne text-sm">{codes?.join(', ')}</code>
+          </div>
           <UpdateDiscountForm>
-            <div className="cart-discount">
-              <code>{codes?.join(', ')}</code>
-              &nbsp;
-              <button>Remove</button>
-            </div>
+            <button className="text-white/50 hover:text-white text-xs">Remove</button>
           </UpdateDiscountForm>
         </div>
-      </dl>
+      )}
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <input type="text" name="discountCode" placeholder="Discount code" />
-          &nbsp;
-          <button type="submit">Apply</button>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            name="discountCode"
+            placeholder="Discount code"
+            className="flex-1 bg-black border border-white/20 rounded-md px-3 py-2 text-white text-sm placeholder:text-white/40 focus:border-champagne focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 border border-white/20 rounded-md text-white text-sm hover:border-champagne hover:text-champagne transition-colors"
+          >
+            Apply
+          </button>
         </div>
       </UpdateDiscountForm>
     </div>

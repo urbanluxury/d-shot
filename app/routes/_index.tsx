@@ -1,93 +1,79 @@
-import {Await, useLoaderData, Link} from 'react-router';
+import {useState} from 'react';
+import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/_index';
-import {Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
-import type {
-  FeaturedCollectionFragment,
-  RecommendedProductsQuery,
-} from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'D-Shot | Official Store - Shot Caller Records'},
+    {title: 'D-Shot | Official Store - Shot Records'},
     {
       name: 'description',
       content:
-        'Official merchandise and music from Bay Area legend D-Shot. Shop exclusive apparel, vinyl, and more from Shot Caller Records.',
+        'Official store of D-Shot (Danell Stevens), founding member of The Click and brother of E-40. Shop exclusive merch, vinyl, and music from the Vallejo legend. Est. 1995 - Shot Records.',
     },
   ];
 };
 
-export async function loader(args: Route.LoaderArgs) {
-  const deferredData = loadDeferredData(args);
-  const criticalData = await loadCriticalData(args);
-  return {...deferredData, ...criticalData};
-}
-
-async function loadCriticalData({context}: Route.LoaderArgs) {
-  const [{collections}, heroData, featuredSectionData] = await Promise.all([
-    context.storefront.query(FEATURED_COLLECTION_QUERY),
+export async function loader({context}: Route.LoaderArgs) {
+  const [heroData, eventsData, collectionsData, featuredAlbumData] = await Promise.all([
     context.storefront.query(HERO_SETTINGS_QUERY),
-    context.storefront.query(FEATURED_SECTION_QUERY),
+    context.storefront.query(EVENTS_QUERY),
+    context.storefront.query(HOMEPAGE_COLLECTIONS_QUERY),
+    context.storefront.query(FEATURED_ALBUM_QUERY),
   ]);
 
   // Extract hero settings from metaobject
   const heroMetaobject = heroData?.metaobject;
-  const heroSettings = heroMetaobject
+  const heroSettings: HeroSettings | null = heroMetaobject
     ? heroMetaobject.fields.reduce(
-        (acc: Record<string, string>, field: {key: string; value: string}) => {
-          acc[field.key] = field.value;
-          return acc;
-        },
-        {},
-      )
-    : null;
-
-  // Extract featured section settings - find the one with section_id = 'homepage_products'
-  const allSections = featuredSectionData?.metaobjects?.nodes || [];
-  const featuredSectionMetaobject = allSections.find(
-    (node: {fields: {key: string; value?: string | null}[]}) => {
-      const sectionIdField = node.fields.find((f: {key: string}) => f.key === 'section_id');
-      return sectionIdField?.value === 'homepage_products';
-    },
-  );
-  const featuredSection = featuredSectionMetaobject
-    ? featuredSectionMetaobject.fields.reduce(
-        (acc: Record<string, string>, field: {key: string; value?: string | null}) => {
+        (acc: Record<string, string>, field) => {
           acc[field.key] = field.value || '';
           return acc;
         },
-        {},
-      )
+        {} as Record<string, string>,
+      ) as unknown as HeroSettings
     : null;
 
-  // Load products from the configured collection (if set)
-  let featuredProducts = null;
-  if (featuredSection?.collection_handle) {
-    const {collection} = await context.storefront.query(COLLECTION_PRODUCTS_QUERY, {
-      variables: {handle: featuredSection.collection_handle, first: 8},
-    });
-    featuredProducts = collection?.products?.nodes || null;
-  }
+  // Parse events from metaobject
+  const events = eventsData?.metaobjects?.nodes?.map((node: any) => {
+    return node.fields.reduce((acc: any, field: any) => {
+      acc[field.key] = field.value;
+      return acc;
+    }, {});
+  }) || [];
 
-  return {
-    featuredCollection: collections.nodes[0],
-    heroSettings,
-    featuredSection,
-    featuredProducts,
+  // Get products by collection for tabs
+  const collectionProducts = {
+    'new-arrivals': collectionsData?.newArrivals?.products?.nodes || [],
+    'apparel': collectionsData?.apparel?.products?.nodes || [],
+    'accessories': collectionsData?.accessories?.products?.nodes || [],
+    'shot-glasses': collectionsData?.shotGlasses?.products?.nodes || [],
+    'exclusives': collectionsData?.exclusives?.products?.nodes || [],
   };
-}
 
-function loadDeferredData({context}: Route.LoaderArgs) {
-  const recommendedProducts = context.storefront
-    .query(RECOMMENDED_PRODUCTS_QUERY)
-    .catch((error: Error) => {
-      console.error(error);
-      return null;
-    });
+  // Get featured album (find one with is_featured = true, or just get first one)
+  const albums = featuredAlbumData?.metaobjects?.nodes || [];
+  const featuredAlbumNode = albums.find((node: any) => {
+    const isFeatured = node.fields.find((f: any) => f.key === 'is_featured');
+    return isFeatured?.value === 'true';
+  }) || albums[0];
+
+  const featuredAlbum = featuredAlbumNode
+    ? featuredAlbumNode.fields.reduce((acc: any, field: any) => {
+        if (field.key === 'cover_art' && field.reference) {
+          acc.coverArtUrl = field.reference.image?.url || null;
+        } else {
+          acc[field.key] = field.value;
+        }
+        return acc;
+      }, {})
+    : null;
 
   return {
-    recommendedProducts,
+    heroSettings,
+    events,
+    collectionProducts,
+    featuredAlbum,
   };
 }
 
@@ -102,18 +88,26 @@ export default function Homepage() {
       {/* Shop Categories */}
       <ShopCategories />
 
-      {/* Featured Products */}
-      <FeaturedProducts
-        products={data.recommendedProducts}
-        featuredProducts={data.featuredProducts}
-        sectionSettings={data.featuredSection}
-      />
+      {/* New Arrivals with Tabs */}
+      <NewArrivalsSection collectionProducts={data.collectionProducts} />
+
+      {/* D-Shot Glasses Promo */}
+      <ShotGlassesPromo />
+
+      {/* Music/Vinyl Promo */}
+      <MusicPromo album={data.featuredAlbum} />
+
+      {/* Tour Dates Preview */}
+      <TourDatesPreview events={data.events} />
 
       {/* About Teaser */}
       <AboutTeaser />
 
-      {/* D-Shot Glasses Promo */}
-      <ShotGlassesPromo />
+      {/* Instagram Feed */}
+      <InstagramFeed />
+
+      {/* Newsletter Signup */}
+      <NewsletterSection />
     </div>
   );
 }
@@ -285,136 +279,6 @@ function ShopCategories() {
   );
 }
 
-interface FeaturedSection {
-  section_id?: string;
-  collection_handle?: string;
-  title?: string;
-  subtitle?: string;
-}
-
-function FeaturedProducts({
-  products,
-  featuredProducts,
-  sectionSettings,
-}: {
-  products: Promise<RecommendedProductsQuery | null>;
-  featuredProducts: RecommendedProductsQuery['products']['nodes'] | null;
-  sectionSettings: FeaturedSection | null;
-}) {
-  // Use configured title/subtitle or defaults
-  const title = sectionSettings?.title || 'New Arrivals';
-  const subtitle = sectionSettings?.subtitle || 'Fresh drops from the vault';
-  const collectionHandle = sectionSettings?.collection_handle || 'all';
-
-  // If we have featured products from a specific collection, show those
-  if (featuredProducts && featuredProducts.length > 0) {
-    return (
-      <section className="section">
-        <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">{title}</h2>
-            <p className="section-subtitle">{subtitle}</p>
-          </div>
-
-          <div className="product-grid">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link to={`/collections/${collectionHandle}`} className="btn-outline">
-              View All Products
-            </Link>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Fallback to recommended products
-  return (
-    <section className="section">
-      <div className="container">
-        <div className="section-header">
-          <h2 className="section-title">{title}</h2>
-          <p className="section-subtitle">{subtitle}</p>
-        </div>
-
-        <Suspense fallback={<ProductGridSkeleton />}>
-          <Await resolve={products}>
-            {(response) => (
-              <>
-                <div className="product-grid">
-                  {response?.products.nodes.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-                <div className="text-center mt-12">
-                  <Link to="/collections/all" className="btn-outline">
-                    View All Products
-                  </Link>
-                </div>
-              </>
-            )}
-          </Await>
-        </Suspense>
-      </div>
-    </section>
-  );
-}
-
-function ProductCard({
-  product,
-}: {
-  product: RecommendedProductsQuery['products']['nodes'][0];
-}) {
-  const image = product.featuredImage;
-
-  return (
-    <Link
-      to={`/products/${product.handle}`}
-      className="product-card"
-      prefetch="intent"
-    >
-      <div className="product-card-image">
-        {image ? (
-          <Image
-            alt={image.altText || product.title}
-            aspectRatio="1/1"
-            data={image}
-            sizes="(min-width: 45em) 400px, 100vw"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-white/20">
-            No image
-          </div>
-        )}
-      </div>
-      <div className="product-card-info">
-        <h3 className="product-card-title">{product.title}</h3>
-        <p className="product-card-price">
-          <Money data={product.priceRange.minVariantPrice} />
-        </p>
-      </div>
-    </Link>
-  );
-}
-
-function ProductGridSkeleton() {
-  return (
-    <div className="product-grid">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="card animate-pulse">
-          <div className="aspect-square bg-gray"></div>
-          <div className="p-4 space-y-3">
-            <div className="h-5 bg-gray rounded w-3/4"></div>
-            <div className="h-4 bg-gray rounded w-1/4"></div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function AboutTeaser() {
   return (
@@ -423,19 +287,24 @@ function AboutTeaser() {
         <div className="grid gap-12 lg:grid-cols-2 items-center">
           <div>
             <p className="text-merlot uppercase tracking-widest text-sm font-semibold mb-4">
-              The Legend
+              Vallejo Legend
             </p>
             <h2 className="text-4xl md:text-5xl font-display uppercase text-white mb-6">
               D-Shot
             </h2>
+            <p className="text-white/70 text-lg leading-relaxed mb-4">
+              <strong className="text-champagne">Danell LaShawn Stevens Sr.</strong>, known as D-Shot,
+              is a pioneering rapper and entrepreneur from Vallejo, California. As a founding member
+              of <strong className="text-white">The Click</strong> alongside his brother E-40,
+              sister Suga-T, and cousin B-Legit, he helped define the Bay Area's legendary mobb music sound.
+            </p>
             <p className="text-white/70 text-lg leading-relaxed mb-6">
-              From the streets of Vallejo to the top of the Bay Area hip-hop scene,
-              D-Shot has been a driving force in West Coast music for decades.
-              As a founding member and the CEO of Sick Wid It Records, he's helped
-              shape the sound of an entire generation.
+              His debut album <em className="text-champagne">The Shot Calla</em> (1993) established him as a solo force.
+              In 1995, he founded <strong className="text-white">Shot Records</strong>,
+              building an independent empire that continues to influence West Coast hip-hop.
             </p>
             <Link to="/about" className="btn-secondary">
-              Read More
+              Full Biography
             </Link>
           </div>
           <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden">
@@ -473,7 +342,7 @@ function ShotGlassesPromo() {
                 Premium luxury shot glasses. Elevate your drinking experience.
               </p>
               <span className="btn-primary mt-8 inline-block bg-champagne text-black hover:bg-white text-lg px-8 py-4">
-                Coming Soon
+                Shop Now
               </span>
             </div>
 
@@ -500,57 +369,367 @@ function ShotGlassesPromo() {
   );
 }
 
-const FEATURED_COLLECTION_QUERY = `#graphql
-  fragment FeaturedCollection on Collection {
-    id
-    title
-    image {
-      id
-      url
-      altText
-      width
-      height
-    }
-    handle
-  }
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    collections(first: 1, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...FeaturedCollection
-      }
-    }
-  }
-` as const;
+// Category tabs for New Arrivals section
+const PRODUCT_TABS = [
+  {id: 'new-arrivals', label: 'New Arrivals'},
+  {id: 'apparel', label: 'Apparel'},
+  {id: 'accessories', label: 'Accessories'},
+  {id: 'shot-glasses', label: 'Shot Glasses'},
+  {id: 'exclusives', label: 'Exclusives'},
+];
 
-const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment RecommendedProduct on Product {
-    id
-    title
-    handle
-    priceRange {
-      minVariantPrice {
-        amount
-        currencyCode
-      }
-    }
-    featuredImage {
-      id
-      url
-      altText
-      width
-      height
-    }
-  }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
-    @inContext(country: $country, language: $language) {
-    products(first: 8, sortKey: UPDATED_AT, reverse: true) {
-      nodes {
-        ...RecommendedProduct
-      }
-    }
-  }
-` as const;
+interface CollectionProducts {
+  'new-arrivals': any[];
+  'apparel': any[];
+  'accessories': any[];
+  'shot-glasses': any[];
+  'exclusives': any[];
+}
+
+// New Arrivals Section with Tabs
+function NewArrivalsSection({collectionProducts}: {collectionProducts: CollectionProducts}) {
+  const [activeTab, setActiveTab] = useState<keyof CollectionProducts>('new-arrivals');
+
+  const products = collectionProducts[activeTab] || [];
+  const activeTabLabel = PRODUCT_TABS.find(t => t.id === activeTab)?.label || 'New Arrivals';
+
+  return (
+    <section className="section bg-black">
+      <div className="container">
+        <div className="section-header">
+          <span className="badge-champagne mb-4">Shop Collection</span>
+          <h2 className="section-title">Featured Products</h2>
+          <p className="section-subtitle">Official Shot Caller Merchandise</p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          {PRODUCT_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as keyof CollectionProducts)}
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-champagne text-black'
+                  : 'bg-dark-gray text-white/70 hover:bg-gray hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Product Grid */}
+        {products.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {products.slice(0, 8).map((product: any) => (
+              <Link
+                key={product.id}
+                to={`/products/${product.handle}`}
+                className="group"
+              >
+                <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden mb-3">
+                  {product.featuredImage ? (
+                    <Image
+                      alt={product.featuredImage.altText || product.title}
+                      data={product.featuredImage}
+                      aspectRatio="1/1"
+                      sizes="(min-width: 768px) 25vw, 50vw"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white/20">
+                      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <h3 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors truncate">
+                  {product.title}
+                </h3>
+                <p className="text-champagne font-display mt-1">
+                  <Money data={product.priceRange.minVariantPrice} />
+                </p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-white/60">No products in this collection yet.</p>
+          </div>
+        )}
+
+        <div className="text-center mt-10">
+          <Link to={`/collections/${activeTab}`} className="btn-outline">
+            View All {activeTabLabel}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Music/Vinyl Promo Section
+interface FeaturedAlbum {
+  title?: string;
+  artist?: string;
+  coverArtUrl?: string;
+  spotify_link?: string;
+  apple_music_link?: string;
+}
+
+function MusicPromo({album}: {album: FeaturedAlbum | null}) {
+  // Use album cover from metaobject or fallback to static image
+  const coverArtUrl = album?.coverArtUrl || '/dshot-album-cover.jpg';
+  const albumTitle = album?.title || 'D-Shot Album';
+
+  return (
+    <section className="section bg-dark">
+      <div className="container">
+        <Link
+          to="/collections/music"
+          className="block rounded-xl overflow-hidden group relative bg-gradient-to-r from-black via-dark-gray to-black"
+        >
+          <div className="grid lg:grid-cols-2 items-center min-h-[350px]">
+            {/* Left - Vinyl Image */}
+            <div className="relative h-full flex items-center justify-center p-8 order-2 lg:order-1">
+              <div className="relative">
+                {/* Vinyl Record with Spin Animation */}
+                <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-gray to-black border-4 border-gray/50 flex items-center justify-center animate-spin-slow group-hover:animate-spin-fast">
+                  {/* Album Cover in Center */}
+                  <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden flex items-center justify-center shadow-lg">
+                    <img
+                      src={coverArtUrl}
+                      alt={albumTitle}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {/* Center hole */}
+                  <div className="absolute w-6 h-6 rounded-full bg-black border-2 border-gray/50"></div>
+                  {/* Grooves */}
+                  <div className="absolute inset-8 rounded-full border border-white/10"></div>
+                  <div className="absolute inset-12 rounded-full border border-white/5"></div>
+                  <div className="absolute inset-16 rounded-full border border-white/10"></div>
+                  <div className="absolute inset-20 rounded-full border border-white/5"></div>
+                  {/* Vinyl shine effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 via-transparent to-transparent"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Content */}
+            <div className="p-8 lg:p-12 relative z-10 order-1 lg:order-2">
+              <span className="badge-champagne mb-4">Discography</span>
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-display uppercase text-white mt-4 group-hover:text-champagne transition-colors">
+                The Music
+              </h2>
+              <p className="text-2xl md:text-3xl font-display uppercase text-champagne mt-2">
+                Vinyl & Digital
+              </p>
+              <p className="text-white/70 mt-6 text-lg max-w-md">
+                Classic albums, greatest hits, and exclusive releases. Own a piece of Bay Area hip-hop history.
+              </p>
+              <span className="btn-secondary mt-8 inline-block">
+                Browse Music
+              </span>
+            </div>
+          </div>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+// Tour Dates Preview
+interface TourEvent {
+  event_name?: string;
+  date?: string;
+  venue?: string;
+  city?: string;
+  ticket_link?: string;
+}
+
+function TourDatesPreview({events}: {events: TourEvent[]}) {
+  // Filter for upcoming events (dates in the future)
+  const upcomingEvents = events
+    .filter((event) => {
+      if (!event.date) return false;
+      return new Date(event.date) >= new Date();
+    })
+    .slice(0, 3);
+
+  return (
+    <section className="section bg-gradient-to-b from-merlot/20 to-black">
+      <div className="container">
+        <div className="section-header">
+          <span className="badge-champagne mb-4">On The Road</span>
+          <h2 className="section-title">Tour Dates</h2>
+          <p className="section-subtitle">Catch D-Shot live</p>
+        </div>
+
+        {upcomingEvents.length > 0 ? (
+          <div className="space-y-4 max-w-3xl mx-auto">
+            {upcomingEvents.map((event, index) => (
+              <div
+                key={index}
+                className="bg-dark-gray rounded-lg p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray transition-colors"
+              >
+                <div className="flex items-center gap-6">
+                  {/* Date */}
+                  <div className="text-center min-w-[70px]">
+                    <p className="text-3xl font-display text-champagne">
+                      {event.date ? new Date(event.date).getDate() : '--'}
+                    </p>
+                    <p className="text-white/60 text-sm uppercase">
+                      {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : '---'}
+                    </p>
+                  </div>
+                  {/* Venue Info */}
+                  <div>
+                    <h3 className="font-display uppercase text-white text-lg">
+                      {event.event_name || 'TBA'}
+                    </h3>
+                    <p className="text-white/60">
+                      {event.venue} {event.city && `• ${event.city}`}
+                    </p>
+                  </div>
+                </div>
+                {/* Ticket Button */}
+                {event.ticket_link ? (
+                  <a
+                    href={event.ticket_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary text-sm py-2 px-6"
+                  >
+                    Get Tickets
+                  </a>
+                ) : (
+                  <span className="text-white/40 text-sm uppercase tracking-wider">
+                    Coming Soon
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-white/60 text-lg">No upcoming shows scheduled</p>
+            <p className="text-white/40 mt-2">Check back soon for new dates</p>
+          </div>
+        )}
+
+        <div className="text-center mt-10">
+          <Link to="/tour" className="btn-outline">
+            View All Tour Dates
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Instagram Feed Section
+function InstagramFeed() {
+  // Placeholder images - in production, would integrate with Instagram API
+  const placeholderImages = [
+    { id: 1, alt: 'D-Shot in studio' },
+    { id: 2, alt: 'Live performance' },
+    { id: 3, alt: 'Behind the scenes' },
+    { id: 4, alt: 'Fan meetup' },
+    { id: 5, alt: 'Album artwork' },
+    { id: 6, alt: 'Merch preview' },
+  ];
+
+  return (
+    <section className="section bg-dark">
+      <div className="container">
+        <div className="section-header">
+          <span className="badge-champagne mb-4">@dshot</span>
+          <h2 className="section-title">Follow The Journey</h2>
+          <p className="section-subtitle">Behind the scenes on Instagram</p>
+        </div>
+
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4">
+          {placeholderImages.map((img) => (
+            <a
+              key={img.id}
+              href="https://instagram.com/dshot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="aspect-square bg-dark-gray rounded-lg overflow-hidden group relative"
+            >
+              {/* Placeholder - would be real Instagram images */}
+              <div className="w-full h-full flex items-center justify-center text-white/10">
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+                </svg>
+              </div>
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-merlot/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
+                </svg>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <a
+            href="https://instagram.com/dshot"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline inline-flex items-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
+            </svg>
+            Follow @dshot
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Newsletter Section
+function NewsletterSection() {
+  return (
+    <section className="section bg-gradient-to-r from-merlot to-merlot/80">
+      <div className="container">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-display uppercase text-white mb-4">
+            Stay in the Loop
+          </h2>
+          <p className="text-white/80 text-lg mb-8">
+            Get exclusive drops, tour announcements, and new music first. Join the D-Shot family.
+          </p>
+
+          <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-6 py-4 bg-black/30 border border-white/20 rounded-md text-white placeholder:text-white/50 focus:border-champagne focus:outline-none"
+              required
+            />
+            <button
+              type="submit"
+              className="px-8 py-4 bg-champagne hover:bg-white text-black font-display uppercase tracking-wider rounded-md transition-all"
+            >
+              Subscribe
+            </button>
+          </form>
+
+          <p className="text-white/50 text-sm mt-4">
+            No spam, ever. Unsubscribe anytime.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const HERO_SETTINGS_QUERY = `#graphql
   query HeroSettings {
@@ -563,9 +742,9 @@ const HERO_SETTINGS_QUERY = `#graphql
   }
 ` as const;
 
-const FEATURED_SECTION_QUERY = `#graphql
-  query FeaturedSection {
-    metaobjects(type: "featured_section", first: 10) {
+const EVENTS_QUERY = `#graphql
+  query HomepageEvents {
+    metaobjects(type: "event", first: 10) {
       nodes {
         fields {
           key
@@ -576,10 +755,11 @@ const FEATURED_SECTION_QUERY = `#graphql
   }
 ` as const;
 
-const COLLECTION_PRODUCTS_QUERY = `#graphql
-  query CollectionProducts($handle: String!, $first: Int!) {
-    collection(handle: $handle) {
-      products(first: $first) {
+const HOMEPAGE_COLLECTIONS_QUERY = `#graphql
+  query HomepageCollections($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    newArrivals: collection(handle: "new-arrivals") {
+      products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
           id
           title
@@ -596,6 +776,115 @@ const COLLECTION_PRODUCTS_QUERY = `#graphql
             altText
             width
             height
+          }
+        }
+      }
+    }
+    apparel: collection(handle: "apparel") {
+      products(first: 8, sortKey: CREATED, reverse: true) {
+        nodes {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+    accessories: collection(handle: "accessories") {
+      products(first: 8, sortKey: CREATED, reverse: true) {
+        nodes {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+    shotGlasses: collection(handle: "shot-glasses") {
+      products(first: 8, sortKey: CREATED, reverse: true) {
+        nodes {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+    exclusives: collection(handle: "exclusives") {
+      products(first: 8, sortKey: CREATED, reverse: true) {
+        nodes {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          featuredImage {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+  }
+` as const;
+
+const FEATURED_ALBUM_QUERY = `#graphql
+  query FeaturedAlbum {
+    metaobjects(type: "album_release", first: 10) {
+      nodes {
+        fields {
+          key
+          value
+          reference {
+            ... on MediaImage {
+              image {
+                url
+                altText
+              }
+            }
           }
         }
       }

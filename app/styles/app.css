@@ -398,12 +398,30 @@ main {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinFast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.5s ease forwards;
 }
 
 .animate-slide-up {
   animation: slideUp 0.5s ease forwards;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+.animate-spin-fast {
+  animation: spinFast 2s linear infinite;
 }
 
 /* Utility: Hide scrollbar */

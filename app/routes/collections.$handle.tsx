@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {redirect, useLoaderData, Link, useParams} from 'react-router';
 import type {Route} from './+types/collections.$handle';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
@@ -36,11 +36,11 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     throw redirect('/collections');
   }
 
-  const [{collection}] = await Promise.all([
+  const [{collection}, {metaobjects: shopCategories}] = await Promise.all([
     storefront.query(COLLECTION_QUERY, {
       variables: {handle, ...paginationVariables},
-      // Add other queries here, so that they are loaded in parallel
     }),
+    storefront.query(SHOP_CATEGORIES_QUERY),
   ]);
 
   if (!collection) {
@@ -54,6 +54,7 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
 
   return {
     collection,
+    shopCategories,
   };
 }
 
@@ -67,27 +68,146 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {collection} = useLoaderData<typeof loader>();
+  const {collection, shopCategories} = useLoaderData<typeof loader>();
+  const {handle} = useParams();
+
+  // Parse shop categories from metaobject
+  const categories = shopCategories?.nodes?.map((node: any) => {
+    const fields = node.fields.reduce((acc: any, field: any) => {
+      acc[field.key] = field.value;
+      return acc;
+    }, {});
+    return {
+      title: fields.title,
+      handle: fields.collection_handle,
+      order: parseInt(fields.sort_order || '0'),
+    };
+  }).sort((a: any, b: any) => a.order - b.order) || [];
 
   return (
-    <div className="collection">
+    <div className="collection bg-black min-h-screen">
       <PageHero
         title={collection.title}
         subtitle={collection.description}
         label="Collection"
       />
-      <PaginatedResourceSection<ProductItemFragment>
-        connection={collection.products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        )}
-      </PaginatedResourceSection>
+
+      <div className="container py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters - Hidden on mobile, shown on desktop */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <div className="bg-dark-gray rounded-lg p-6 sticky top-24">
+              <h3 className="text-lg font-display uppercase text-white mb-6">Shop By</h3>
+
+              {/* Category Filter */}
+              <div className="mb-6">
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Categories</h4>
+                <nav className="space-y-2">
+                  <Link
+                    to="/collections/all"
+                    className="block text-white/80 hover:text-champagne transition-colors"
+                  >
+                    All Products
+                  </Link>
+                  <Link
+                    to="/collections/apparel"
+                    className={`block transition-colors ${handle === 'apparel' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    Apparel
+                  </Link>
+                  <Link
+                    to="/collections/music"
+                    className={`block transition-colors ${handle === 'music' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    Music
+                  </Link>
+                  <Link
+                    to="/collections/accessories"
+                    className={`block transition-colors ${handle === 'accessories' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    Accessories
+                  </Link>
+                  <Link
+                    to="/collections/shot-glasses"
+                    className={`block transition-colors ${handle === 'shot-glasses' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    Shot Glasses
+                  </Link>
+                  <Link
+                    to="/collections/exclusives"
+                    className={`block transition-colors ${handle === 'exclusives' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    Exclusives
+                  </Link>
+                  <Link
+                    to="/collections/new-arrivals"
+                    className={`block transition-colors ${handle === 'new-arrivals' ? 'text-champagne font-medium' : 'text-white/80 hover:text-champagne'}`}
+                  >
+                    New Arrivals
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Price Filter */}
+              <div className="mb-6">
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Price Range</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>Under $25</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$25 - $50</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$50 - $100</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$100+</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Sort */}
+              <div>
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Sort By</h4>
+                <select className="w-full bg-black border border-white/20 rounded-md px-3 py-2 text-white text-sm focus:border-champagne focus:outline-none">
+                  <option>Featured</option>
+                  <option>Price: Low to High</option>
+                  <option>Price: High to Low</option>
+                  <option>Newest</option>
+                </select>
+              </div>
+            </div>
+          </aside>
+
+          {/* Product Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-white/60">
+                {collection.products.nodes.length} products
+              </p>
+            </div>
+
+            <PaginatedResourceSection<ProductItemFragment>
+              connection={collection.products}
+              resourcesClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {({node: product, index}) => (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  loading={index < 8 ? 'eager' : undefined}
+                />
+              )}
+            </PaginatedResourceSection>
+          </div>
+        </div>
+      </div>
+
       <Analytics.CollectionView
         data={{
           collection: {
@@ -158,6 +278,20 @@ const COLLECTION_QUERY = `#graphql
           hasNextPage
           endCursor
           startCursor
+        }
+      }
+    }
+  }
+` as const;
+
+const SHOP_CATEGORIES_QUERY = `#graphql
+  query ShopCategories {
+    metaobjects(type: "shop_category", first: 20) {
+      nodes {
+        handle
+        fields {
+          key
+          value
         }
       }
     }

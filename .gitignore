@@ -2,12 +2,18 @@ node_modules
 dist
 .idea
 .vscode
-/.DS_Store
+.DS_Store
+*.DS_Store
+tsconfig.tsbuildinfo
 
 .shopify
 .vercel
 .env*.local
-# *.mp4 - removed, using compressed version
+
+# Scripts with API tokens - keep local only
+scripts/
+
+# Media files
 Screenshot*.png
 public/hero-video.mp4
 *.mp4

@@ -22,12 +22,12 @@ export function ProductItem({
 
   return (
     <Link
-      className="product-card group"
+      className="group block bg-dark-gray rounded-lg overflow-hidden hover:ring-2 hover:ring-champagne/50 transition-all"
       key={product.id}
       prefetch="intent"
       to={variantUrl}
     >
-      <div className="product-card-image">
+      <div className="aspect-square overflow-hidden bg-gray">
         {image ? (
           <Image
             alt={image.altText || product.title}
@@ -38,14 +38,18 @@ export function ProductItem({
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-white/20 text-4xl bg-gray">
-            📷
+          <div className="w-full h-full flex items-center justify-center text-white/20 text-4xl">
+            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
         )}
       </div>
-      <div className="product-card-info">
-        <h4 className="product-card-title">{product.title}</h4>
-        <p className="product-card-price">
+      <div className="p-4">
+        <h4 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors truncate">
+          {product.title}
+        </h4>
+        <p className="text-champagne font-display mt-1">
           <Money data={product.priceRange.minVariantPrice} />
         </p>
       </div>

@@ -1,5 +1,5 @@
-import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue} from 'react-router';
+import {Suspense, useState} from 'react';
+import {Await, NavLink, useAsyncValue, Link} from 'react-router';
 import {
   type CartViewPayload,
   useAnalytics,
@@ -50,6 +50,17 @@ export function Header({
   );
 }
 
+// Shop dropdown categories
+const SHOP_CATEGORIES = [
+  {title: 'All Products', handle: 'all'},
+  {title: 'Apparel', handle: 'apparel'},
+  {title: 'Music', handle: 'music'},
+  {title: 'Accessories', handle: 'accessories'},
+  {title: 'Shot Glasses', handle: 'shot-glasses'},
+  {title: 'Exclusives', handle: 'exclusives'},
+  {title: 'New Arrivals', handle: 'new-arrivals'},
+];
+
 export function HeaderMenu({
   menu,
   primaryDomainUrl,
@@ -63,6 +74,7 @@ export function HeaderMenu({
 }) {
   const className = viewport === 'desktop' ? 'header-nav' : 'header-menu-mobile';
   const {close} = useAside();
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
 
   return (
     <nav className={className} role="navigation">
@@ -78,31 +90,120 @@ export function HeaderMenu({
         </NavLink>
       )}
       {/* Custom navigation for D-Shot */}
-      {MAIN_MENU.map((item) => (
-        <NavLink
-          key={item.id}
-          end={item.url === '/'}
-          onClick={close}
-          prefetch="intent"
-          className={({isActive}) =>
-            `nav-link ${isActive ? 'text-champagne' : ''}`
-          }
-          to={item.url}
-        >
-          {item.title}
-        </NavLink>
-      ))}
+      {MAIN_MENU.map((item) => {
+        // Shop item with dropdown (desktop only)
+        if (item.id === 'shop' && viewport === 'desktop') {
+          return (
+            <div
+              key={item.id}
+              className="relative"
+              onMouseEnter={() => setShopDropdownOpen(true)}
+              onMouseLeave={() => setShopDropdownOpen(false)}
+            >
+              <NavLink
+                prefetch="intent"
+                className={({isActive}) =>
+                  `nav-link inline-flex items-center gap-1 ${isActive ? 'text-champagne' : ''}`
+                }
+                to={item.url}
+              >
+                {item.title}
+                <svg
+                  className={`w-4 h-4 transition-transform ${shopDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </NavLink>
+              {/* Dropdown Menu */}
+              <div
+                className={`absolute top-full left-0 mt-2 w-48 bg-dark-gray rounded-lg shadow-xl border border-white/10 overflow-hidden transition-all duration-200 ${
+                  shopDropdownOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
+                }`}
+              >
+                {SHOP_CATEGORIES.map((category) => (
+                  <Link
+                    key={category.handle}
+                    to={`/collections/${category.handle}`}
+                    className="block px-4 py-3 text-white/80 hover:text-champagne hover:bg-white/5 transition-colors text-sm"
+                  >
+                    {category.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // Mobile: Show Shop with expandable categories
+        if (item.id === 'shop' && viewport === 'mobile') {
+          return (
+            <div key={item.id} className="space-y-2">
+              <NavLink
+                onClick={close}
+                prefetch="intent"
+                className={({isActive}) =>
+                  `nav-link ${isActive ? 'text-champagne' : ''}`
+                }
+                to={item.url}
+              >
+                {item.title}
+              </NavLink>
+              <div className="pl-4 space-y-2 border-l border-white/20">
+                {SHOP_CATEGORIES.map((category) => (
+                  <Link
+                    key={category.handle}
+                    to={`/collections/${category.handle}`}
+                    onClick={close}
+                    className="block text-white/60 hover:text-champagne transition-colors text-sm py-1"
+                  >
+                    {category.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // Regular menu items
+        return (
+          <NavLink
+            key={item.id}
+            end={item.url === '/'}
+            onClick={close}
+            prefetch="intent"
+            className={({isActive}) =>
+              `nav-link ${isActive ? 'text-champagne' : ''}`
+            }
+            to={item.url}
+          >
+            {item.title}
+          </NavLink>
+        );
+      })}
       {/* Dynamic Shopify menu items */}
       {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
         if (!item.url) return null;
-        // Skip items that duplicate our custom menu
-        if (MAIN_MENU.some(m => m.url === new URL(item.url!).pathname)) return null;
+
+        const pathname = new URL(item.url).pathname;
+
+        // Skip items that duplicate our custom menu (check both exact match and /pages/ variants)
+        const isDuplicate = MAIN_MENU.some(m => {
+          const menuPath = m.url;
+          return pathname === menuPath ||
+                 pathname === `/pages${menuPath}` ||
+                 pathname === menuPath.replace('/', '/pages/') ||
+                 item.title.toLowerCase() === m.title.toLowerCase();
+        });
+        if (isDuplicate) return null;
 
         const url =
           item.url.includes('myshopify.com') ||
           item.url.includes(publicStoreDomain) ||
           item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
+            ? pathname
             : item.url;
         return (
           <NavLink

@@ -23,8 +23,8 @@ export function Footer({
               <img src="/dshot-logo.png" alt="D-Shot Official" className="h-16" />
             </NavLink>
             <p className="text-white/60 mt-4 text-sm leading-relaxed">
-              Bay Area Legend. Shot Caller Records.
-              Official merchandise and music from D-Shot.
+              Vallejo Legend. Founder of Shot Records.
+              Brother of E-40. Member of The Click.
             </p>
             <div className="flex gap-4 mt-6">
               <SocialLink href="https://instagram.com/dshot" label="Instagram" icon="instagram" />
@@ -120,7 +120,7 @@ export function Footer({
 
         {/* Bottom Bar */}
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} D-Shot / Shot Caller Records. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} D-Shot / Shot Records. Est. 1995. All rights reserved.</p>
         </div>
       </div>
     </footer>

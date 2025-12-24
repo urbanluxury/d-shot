@@ -1,5 +1,5 @@
 import type {Route} from './+types/collections.all';
-import {useLoaderData} from 'react-router';
+import {useLoaderData, Link, useLocation} from 'react-router';
 import {getPaginationVariables} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 import {ProductItem} from '~/components/ProductItem';
@@ -7,7 +7,7 @@ import {PageHero} from '~/components/PageHero';
 import type {CollectionItemFragment} from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Products`}];
+  return [{title: `D-Shot | All Products`}];
 };
 
 export async function loader(args: Route.LoaderArgs) {
@@ -30,13 +30,13 @@ async function loadCriticalData({context, request}: Route.LoaderArgs) {
     pageBy: 8,
   });
 
-  const [{products}] = await Promise.all([
+  const [{products}, {metaobjects: shopCategories}] = await Promise.all([
     storefront.query(CATALOG_QUERY, {
       variables: {...paginationVariables},
     }),
-    // Add other queries here, so that they are loaded in parallel
+    storefront.query(SHOP_CATEGORIES_QUERY),
   ]);
-  return {products};
+  return {products, shopCategories};
 }
 
 /**
@@ -49,27 +49,127 @@ function loadDeferredData({context}: Route.LoaderArgs) {
 }
 
 export default function Collection() {
-  const {products} = useLoaderData<typeof loader>();
+  const {products, shopCategories} = useLoaderData<typeof loader>();
+  const location = useLocation();
+
+  // Parse shop categories from metaobject
+  const categories = shopCategories?.nodes?.map((node: any) => {
+    const fields = node.fields.reduce((acc: any, field: any) => {
+      acc[field.key] = field.value;
+      return acc;
+    }, {});
+    return {
+      title: fields.title,
+      handle: fields.collection_handle,
+      order: parseInt(fields.sort_order || '0'),
+    };
+  }).sort((a: any, b: any) => a.order - b.order) || [];
 
   return (
-    <div className="collection">
+    <div className="collection bg-black min-h-screen">
       <PageHero
         title="All Products"
         subtitle="Official D-Shot Merchandise & Music"
         label="Shop"
       />
-      <PaginatedResourceSection<CollectionItemFragment>
-        connection={products}
-        resourcesClassName="products-grid"
-      >
-        {({node: product, index}) => (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        )}
-      </PaginatedResourceSection>
+
+      <div className="container py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters - Hidden on mobile, shown on desktop */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <div className="bg-dark-gray rounded-lg p-6 sticky top-24">
+              <h3 className="text-lg font-display uppercase text-white mb-6">Shop By</h3>
+
+              {/* Category Filter */}
+              <div className="mb-6">
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Categories</h4>
+                <nav className="space-y-2">
+                  <Link
+                    to="/collections/all"
+                    className="block text-champagne font-medium"
+                  >
+                    All Products
+                  </Link>
+                  <Link to="/collections/apparel" className="block text-white/80 hover:text-champagne transition-colors">
+                    Apparel
+                  </Link>
+                  <Link to="/collections/music" className="block text-white/80 hover:text-champagne transition-colors">
+                    Music
+                  </Link>
+                  <Link to="/collections/accessories" className="block text-white/80 hover:text-champagne transition-colors">
+                    Accessories
+                  </Link>
+                  <Link to="/collections/shot-glasses" className="block text-white/80 hover:text-champagne transition-colors">
+                    Shot Glasses
+                  </Link>
+                  <Link to="/collections/exclusives" className="block text-white/80 hover:text-champagne transition-colors">
+                    Exclusives
+                  </Link>
+                  <Link to="/collections/new-arrivals" className="block text-white/80 hover:text-champagne transition-colors">
+                    New Arrivals
+                  </Link>
+                </nav>
+              </div>
+
+              {/* Price Filter */}
+              <div className="mb-6">
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Price Range</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>Under $25</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$25 - $50</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$50 - $100</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-white/80 cursor-pointer hover:text-champagne transition-colors">
+                    <input type="checkbox" className="rounded border-white/20 bg-black text-champagne focus:ring-champagne" />
+                    <span>$100+</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Sort */}
+              <div>
+                <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Sort By</h4>
+                <select className="w-full bg-black border border-white/20 rounded-md px-3 py-2 text-white text-sm focus:border-champagne focus:outline-none">
+                  <option>Featured</option>
+                  <option>Price: Low to High</option>
+                  <option>Price: High to Low</option>
+                  <option>Newest</option>
+                </select>
+              </div>
+            </div>
+          </aside>
+
+          {/* Product Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-white/60">
+                {products.nodes.length} products
+              </p>
+            </div>
+
+            <PaginatedResourceSection<CollectionItemFragment>
+              connection={products}
+              resourcesClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {({node: product, index}) => (
+                <ProductItem
+                  key={product.id}
+                  product={product}
+                  loading={index < 8 ? 'eager' : undefined}
+                />
+              )}
+            </PaginatedResourceSection>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -124,4 +224,18 @@ const CATALOG_QUERY = `#graphql
     }
   }
   ${COLLECTION_ITEM_FRAGMENT}
+` as const;
+
+const SHOP_CATEGORIES_QUERY = `#graphql
+  query ShopCategories {
+    metaobjects(type: "shop_category", first: 20) {
+      nodes {
+        handle
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
 ` as const;

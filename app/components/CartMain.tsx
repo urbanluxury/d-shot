@@ -25,19 +25,18 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const withDiscount =
     cart &&
     Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
-  const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity ? cart.totalQuantity > 0 : false;
 
   return (
-    <div className={className}>
+    <div className={`cart-main ${withDiscount ? 'with-discount' : ''}`}>
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
-        <div aria-labelledby="cart-lines">
-          <ul>
+      <div className={layout === 'page' ? 'grid lg:grid-cols-3 gap-8' : ''}>
+        <div className={layout === 'page' ? 'lg:col-span-2' : ''} aria-labelledby="cart-lines">
+          <div className="space-y-4">
             {(cart?.lines?.nodes ?? []).map((line) => (
               <CartLineItem key={line.id} line={line} layout={layout} />
             ))}
-          </ul>
+          </div>
         </div>
         {cartHasItems && <CartSummary cart={cart} layout={layout} />}
       </div>
@@ -53,15 +52,23 @@ function CartEmpty({
 }) {
   const {close} = useAside();
   return (
-    <div hidden={hidden}>
-      <br />
-      <p>
-        Looks like you haven&rsquo;t added anything yet, let&rsquo;s get you
-        started!
+    <div hidden={hidden} className="text-center py-16">
+      <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-dark-gray flex items-center justify-center">
+        <svg className="w-10 h-10 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+      </div>
+      <h3 className="text-2xl font-display uppercase text-white mb-2">Your Cart is Empty</h3>
+      <p className="text-white/60 mb-8">
+        Looks like you haven&rsquo;t added anything yet.
       </p>
-      <br />
-      <Link to="/collections" onClick={close} prefetch="viewport">
-        Continue shopping →
+      <Link
+        to="/collections/all"
+        onClick={close}
+        prefetch="viewport"
+        className="inline-block px-8 py-4 bg-champagne hover:bg-white text-black font-display uppercase tracking-wider rounded-md transition-all"
+      >
+        Start Shopping
       </Link>
     </div>
   );

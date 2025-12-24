@@ -102,30 +102,77 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, vendor} = product;
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
+    <div className="product-page bg-black min-h-screen">
+      <div className="container py-12">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+          {/* Product Image */}
+          <div className="product-image-wrapper">
+            <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden">
+              <ProductImage image={selectedVariant?.image} />
+            </div>
+          </div>
+
+          {/* Product Info */}
+          <div className="product-info flex flex-col">
+            {vendor && (
+              <p className="text-merlot uppercase tracking-widest text-sm font-semibold mb-2">
+                {vendor}
+              </p>
+            )}
+            <h1 className="text-4xl md:text-5xl font-display uppercase text-white mb-4">
+              {title}
+            </h1>
+            <div className="text-3xl text-champagne font-display mb-8">
+              <ProductPrice
+                price={selectedVariant?.price}
+                compareAtPrice={selectedVariant?.compareAtPrice}
+              />
+            </div>
+
+            <div className="product-form-wrapper mb-8">
+              <ProductForm
+                productOptions={productOptions}
+                selectedVariant={selectedVariant}
+              />
+            </div>
+
+            {/* Product Details */}
+            <div className="border-t border-white/10 pt-8 mt-auto">
+              <h3 className="text-lg font-display uppercase text-white mb-4">
+                Description
+              </h3>
+              <div
+                className="text-white/70 leading-relaxed prose prose-invert prose-sm max-w-none"
+                dangerouslySetInnerHTML={{__html: descriptionHtml}}
+              />
+            </div>
+
+            {/* Trust Badges */}
+            <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/10">
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Authentic Merchandise</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <span>Secure Checkout</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/60 text-sm">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <span>Fast Shipping</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <Analytics.ProductView
         data={{
