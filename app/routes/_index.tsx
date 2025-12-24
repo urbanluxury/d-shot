@@ -463,26 +463,34 @@ function ShotGlassesPromo() {
             {/* Left Content */}
             <div className="p-8 lg:p-12 relative z-10">
               <span className="badge-champagne mb-4">Luxury Collection</span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display uppercase text-champagne mt-4 group-hover:scale-105 transition-transform origin-left">
+              <h2 className="text-6xl md:text-7xl lg:text-8xl font-display uppercase text-champagne mt-4 group-hover:scale-105 transition-transform origin-left">
                 D.Shot
               </h2>
-              <p className="text-3xl md:text-4xl font-display uppercase text-white mt-2">
+              <p className="text-5xl md:text-6xl lg:text-7xl font-display uppercase text-white mt-2">
                 Shot Glasses
               </p>
-              <p className="text-white/80 mt-4 text-lg">
+              <p className="text-white/80 mt-6 text-xl">
                 Premium luxury shot glasses. Elevate your drinking experience.
               </p>
-              <span className="btn-primary mt-6 inline-block bg-champagne text-black hover:bg-white">
+              <span className="btn-primary mt-8 inline-block bg-champagne text-black hover:bg-white text-lg px-8 py-4">
                 Coming Soon
               </span>
             </div>
 
-            {/* Right Image */}
+            {/* Right Image with Logo Behind */}
             <div className="relative h-full flex items-center justify-center p-8">
+              {/* Logo Behind Glasses - Top Right */}
+              <img
+                src="/dshot-logo.png"
+                alt=""
+                className="absolute -top-8 -right-12 w-[500px] lg:w-[650px] opacity-80"
+                style={{filter: 'brightness(0) invert(1) sepia(1) saturate(0.3) hue-rotate(350deg) brightness(1.3)'}}
+              />
+              {/* Shot Glasses */}
               <img
                 src="/dshot-glasses-promo.png"
                 alt="D-Shot Luxury Shot Glasses"
-                className="max-h-[350px] w-auto object-contain drop-shadow-2xl group-hover:scale-105 transition-transform"
+                className="relative z-10 max-h-[350px] w-auto object-contain drop-shadow-2xl group-hover:scale-105 transition-transform"
               />
             </div>
           </div>
