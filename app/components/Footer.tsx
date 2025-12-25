@@ -141,7 +141,7 @@ function SocialLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-10 h-10 rounded-full bg-gray flex items-center justify-center text-white/60 hover:bg-merlot hover:text-white transition-all"
+      className="w-10 h-10 rounded-full bg-merlot flex items-center justify-center text-champagne hover:bg-champagne hover:text-black transition-all"
       aria-label={label}
     >
       {icon === 'instagram' && (
