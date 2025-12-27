@@ -188,7 +188,7 @@ aside main {
 }
 
 .header-nav a {
-  @apply text-sm uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
+  @apply text-base uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
 }
 
 .header-ctas {
@@ -200,7 +200,7 @@ aside main {
 }
 
 .nav-link {
-  @apply text-sm uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
+  @apply text-base uppercase tracking-wider text-white/80 hover:text-champagne transition-colors;
 }
 
 .header-menu-mobile {
@@ -230,11 +230,11 @@ aside main {
 }
 
 .footer-links a {
-  @apply block text-white/60 hover:text-champagne transition-colors py-1;
+  @apply block text-white/60 hover:text-champagne transition-colors py-2 text-base;
 }
 
 .footer-bottom {
-  @apply border-t border-gray/30 mt-8 pt-8 text-center text-white/40 text-sm;
+  @apply border-t border-gray/30 mt-8 pt-8 text-center text-white/40 text-base;
 }
 
 .footer-logo {

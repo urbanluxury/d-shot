@@ -27,10 +27,11 @@ export default function About() {
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div className="aspect-[3/4] bg-dark-gray rounded-lg overflow-hidden sticky top-24">
-              {/* Placeholder for D-Shot photo */}
-              <div className="w-full h-full flex items-center justify-center text-white/20 text-8xl">
-                📷
-              </div>
+              <img
+                src="/dshot-bio.jpeg"
+                alt="D-Shot - Danell LaShawn Stevens Sr."
+                className="w-full h-full object-cover object-top"
+              />
             </div>
             <div className="space-y-6 text-white/80 text-lg leading-relaxed">
               {/* Quick Facts */}

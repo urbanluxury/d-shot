@@ -250,7 +250,7 @@ function ArticleCard({
           </div>
         )}
       </div>
-      <div className="flex items-center gap-3 text-xs text-white/50 mb-2">
+      <div className="flex items-center gap-3 text-sm text-white/50 mb-2">
         <time dateTime={article.publishedAt}>{publishedDate}</time>
         {article.author?.name && (
           <>
@@ -259,11 +259,11 @@ function ArticleCard({
           </>
         )}
       </div>
-      <h3 className="font-display uppercase text-white text-lg group-hover:text-champagne transition-colors line-clamp-2">
+      <h3 className="font-display uppercase text-white text-xl group-hover:text-champagne transition-colors line-clamp-2">
         {article.title}
       </h3>
       {article.excerpt && (
-        <p className="text-white/60 text-sm mt-2 line-clamp-2">{article.excerpt}</p>
+        <p className="text-white/60 text-base mt-2 line-clamp-2">{article.excerpt}</p>
       )}
     </Link>
   );

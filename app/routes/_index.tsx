@@ -146,7 +146,7 @@ function HeroSection({heroSettings}: {heroSettings: HeroSettings | null}) {
       <div className="hero-overlay z-[1]"></div>
 
       <div className="hero-content">
-        <p className="text-white uppercase tracking-[0.3em] mb-4 text-sm font-semibold animate-fade-in">
+        <p className="text-white uppercase tracking-[0.3em] mb-4 text-base font-semibold animate-fade-in">
           {heading}
         </p>
         <img
@@ -270,7 +270,7 @@ function ShopCategories() {
               <h3 className="text-xl font-display uppercase text-white group-hover:text-champagne transition-colors">
                 {category.title}
               </h3>
-              <p className="text-white/60 text-sm mt-2">{category.description}</p>
+              <p className="text-white/60 text-base mt-2">{category.description}</p>
             </Link>
           ))}
         </div>
@@ -308,10 +308,11 @@ function AboutTeaser() {
             </Link>
           </div>
           <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden">
-            {/* Placeholder for D-Shot image */}
-            <div className="w-full h-full flex items-center justify-center text-white/20 text-6xl">
-              📷
-            </div>
+            <img
+              src="/dshot-bio.jpeg"
+              alt="D-Shot - Vallejo Legend"
+              className="w-full h-full object-cover object-top"
+            />
           </div>
         </div>
       </div>
@@ -408,7 +409,7 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as keyof CollectionProducts)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-6 py-3 rounded-full text-base font-medium transition-all duration-300 ${
                 activeTab === tab.id
                   ? 'bg-champagne text-black'
                   : 'bg-dark-gray text-white/70 hover:bg-gray hover:text-white'
@@ -445,7 +446,7 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
                     </div>
                   )}
                 </div>
-                <h3 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors truncate">
+                <h3 className="font-display uppercase text-white text-base group-hover:text-champagne transition-colors truncate">
                   {product.title}
                 </h3>
                 <p className="text-champagne font-display mt-1">
@@ -528,7 +529,7 @@ function MusicPromo({album}: {album: FeaturedAlbum | null}) {
                 Vinyl & Digital
               </p>
               <p className="text-white/70 mt-6 text-lg max-w-md">
-                Classic albums, greatest hits, and exclusive releases. Own a piece of Bay Area hip-hop history.
+                13 albums spanning 1993–2024. CDs, vinyl, and exclusive releases. Own a piece of Bay Area hip-hop history.
               </p>
               <span className="btn-secondary mt-8 inline-block">
                 Browse Music

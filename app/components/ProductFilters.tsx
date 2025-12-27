@@ -74,13 +74,13 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
     <div className="space-y-6">
       {/* Categories */}
       <div>
-        <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Categories</h4>
-        <nav className="space-y-2">
+        <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Categories</h4>
+        <nav className="space-y-3">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.handle}
               to={`/collections/${cat.handle}`}
-              className={`block text-sm transition-colors ${
+              className={`block text-base transition-colors py-1 ${
                 currentHandle === cat.handle
                   ? 'text-champagne font-medium'
                   : 'text-white/70 hover:text-champagne'
@@ -97,7 +97,7 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
         <div className="pt-4 border-t border-white/10">
           <button
             onClick={clearFilters}
-            className="text-champagne text-sm hover:underline"
+            className="text-champagne text-base hover:underline"
           >
             Clear All Filters
           </button>
@@ -107,18 +107,18 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
       {/* Product Type */}
       {productTypes.length > 0 && (
         <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Product Type</h4>
-          <div className="space-y-2">
+          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Product Type</h4>
+          <div className="space-y-3">
             {productTypes.map((type) => (
-              <label key={type} className="flex items-center gap-2 cursor-pointer group">
+              <label key={type} className="flex items-center gap-3 cursor-pointer group py-1">
                 <input
                   type="radio"
                   name="productType"
                   checked={activeType === type}
                   onChange={() => setFilter('type', activeType === type ? '' : type)}
-                  className="w-4 h-4 border-white/30 bg-transparent text-champagne focus:ring-champagne"
+                  className="w-5 h-5 border-white/30 bg-transparent text-champagne focus:ring-champagne"
                 />
-                <span className="text-white/70 text-sm group-hover:text-white">{type}</span>
+                <span className="text-white/70 text-base group-hover:text-white">{type}</span>
               </label>
             ))}
           </div>
@@ -128,13 +128,13 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
       {/* Size */}
       {sizeOptions.length > 0 && (
         <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Size</h4>
+          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Size</h4>
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((size) => (
               <button
                 key={size}
                 onClick={() => setFilter('size', activeSize === size ? '' : size)}
-                className={`px-3 py-1 text-sm rounded border transition-colors ${
+                className={`px-4 py-2 text-base rounded border transition-colors ${
                   activeSize === size
                     ? 'bg-champagne text-black border-champagne'
                     : 'border-white/30 text-white/70 hover:border-champagne hover:text-champagne'
@@ -150,18 +150,18 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
       {/* Brand */}
       {vendors.length > 1 && (
         <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Brand</h4>
-          <div className="space-y-2">
+          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Brand</h4>
+          <div className="space-y-3">
             {vendors.map((vendor) => (
-              <label key={vendor} className="flex items-center gap-2 cursor-pointer group">
+              <label key={vendor} className="flex items-center gap-3 cursor-pointer group py-1">
                 <input
                   type="radio"
                   name="vendor"
                   checked={activeVendor === vendor}
                   onChange={() => setFilter('vendor', activeVendor === vendor ? '' : vendor)}
-                  className="w-4 h-4 border-white/30 bg-transparent text-champagne focus:ring-champagne"
+                  className="w-5 h-5 border-white/30 bg-transparent text-champagne focus:ring-champagne"
                 />
-                <span className="text-white/70 text-sm group-hover:text-white">{vendor}</span>
+                <span className="text-white/70 text-base group-hover:text-white">{vendor}</span>
               </label>
             ))}
           </div>
@@ -170,7 +170,7 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Price Range */}
       <div className="pt-4 border-t border-white/10">
-        <h4 className="text-white/60 text-sm uppercase tracking-wider mb-3">Price</h4>
+        <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Price</h4>
         <div className="space-y-2">
           {priceRanges.map((range) => (
             <button
@@ -179,7 +179,7 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                 activeMinPrice === range.min && activeMaxPrice === range.max ? '' : range.min,
                 activeMinPrice === range.min && activeMaxPrice === range.max ? '' : range.max
               )}
-              className={`block w-full text-left px-3 py-2 text-sm rounded transition-colors ${
+              className={`block w-full text-left px-4 py-3 text-base rounded transition-colors ${
                 activeMinPrice === range.min && activeMaxPrice === range.max
                   ? 'bg-champagne/20 text-champagne'
                   : 'text-white/70 hover:bg-white/5 hover:text-white'

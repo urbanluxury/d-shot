@@ -103,23 +103,23 @@ export default function Article() {
           </h1>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap items-center gap-4 text-white/60 text-sm mb-8 pb-8 border-b border-white/10">
+          <div className="flex flex-wrap items-center gap-4 text-white/60 text-base mb-8 pb-8 border-b border-white/10">
             <time dateTime={article.publishedAt} className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               {publishedDate}
             </time>
             {author?.name && (
               <span className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 By {author.name}
               </span>
             )}
             <span className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {readingTime} min read
@@ -128,7 +128,7 @@ export default function Article() {
 
           {/* Share Buttons */}
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-white/50 text-sm">Share:</span>
+            <span className="text-white/50 text-base">Share:</span>
             <ShareButton platform="twitter" title={title} />
             <ShareButton platform="facebook" />
             <ShareButton platform="linkedin" title={title} />
@@ -154,12 +154,12 @@ export default function Article() {
           {/* Tags */}
           {tags && tags.length > 0 && (
             <div className="mt-12 pt-8 border-t border-white/10">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-white/50 text-sm mr-2">Tags:</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-white/50 text-base mr-2">Tags:</span>
                 {tags.map((tag: string) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-dark-gray text-white/70 text-xs rounded-full"
+                    className="px-4 py-2 bg-dark-gray text-white/70 text-sm rounded-full"
                   >
                     {tag}
                   </span>
@@ -175,8 +175,8 @@ export default function Article() {
                 {author.name.charAt(0)}
               </div>
               <div>
-                <h4 className="font-display uppercase text-white mb-2">Written by {author.name}</h4>
-                <p className="text-white/60 text-sm">
+                <h4 className="font-display uppercase text-white text-lg mb-2">Written by {author.name}</h4>
+                <p className="text-white/60 text-base">
                   Contributing writer for the Shot Records Blog. Stay tuned for more stories, interviews, and exclusive content.
                 </p>
               </div>
@@ -216,14 +216,14 @@ export default function Article() {
                       </div>
                     )}
                   </div>
-                  <div className="text-xs text-white/50 mb-2">
+                  <div className="text-sm text-white/50 mb-2">
                     {new Date(related.publishedAt).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
                       year: 'numeric',
                     })}
                   </div>
-                  <h3 className="font-display uppercase text-white text-lg group-hover:text-champagne transition-colors line-clamp-2">
+                  <h3 className="font-display uppercase text-white text-xl group-hover:text-champagne transition-colors line-clamp-2">
                     {related.title}
                   </h3>
                 </Link>
@@ -233,7 +233,7 @@ export default function Article() {
             <div className="text-center mt-12">
               <Link
                 to={`/blogs/${blogHandle}`}
-                className="inline-flex items-center gap-2 text-champagne font-display uppercase text-sm hover:gap-3 transition-all"
+                className="inline-flex items-center gap-2 text-champagne font-display uppercase text-base hover:gap-3 transition-all"
               >
                 View All {blogTitle} Posts
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

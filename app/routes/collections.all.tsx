@@ -103,16 +103,16 @@ export default function Collection() {
                   activeFilterCount={activeFilterCount}
                 />
               </div>
-              <p className="text-white/60 hidden lg:block">
+              <p className="text-white/70 hidden lg:block text-base">
                 {sortedProducts.length} products
               </p>
-              <p className="text-white/60 lg:hidden text-sm">
+              <p className="text-white/70 lg:hidden">
                 {sortedProducts.length} items
               </p>
               <select
                 value={sort}
                 onChange={(e) => handleSort(e.target.value)}
-                className="bg-dark-gray border border-white/20 rounded-lg px-4 py-2 text-white text-sm focus:border-champagne focus:outline-none"
+                className="bg-dark-gray border border-white/20 rounded-lg px-4 py-3 text-white text-base focus:border-champagne focus:outline-none"
               >
                 <option value="featured">Sort: Featured</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -148,10 +148,10 @@ export default function Collection() {
                         </div>
                       )}
                     </div>
-                    <h3 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors line-clamp-2">
+                    <h3 className="font-display uppercase text-white text-base group-hover:text-champagne transition-colors line-clamp-2">
                       {product.title}
                     </h3>
-                    <p className="text-champagne font-display mt-1">
+                    <p className="text-champagne font-display text-lg mt-1">
                       <Money data={product.priceRange.minVariantPrice} />
                     </p>
                   </Link>

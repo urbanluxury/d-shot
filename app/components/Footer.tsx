@@ -22,7 +22,7 @@ export function Footer({
             <NavLink to="/" className="footer-logo">
               <img src="/dshot-logo.png" alt="D-Shot Official" className="h-16" />
             </NavLink>
-            <p className="text-white/60 mt-4 text-sm leading-relaxed">
+            <p className="text-white/60 mt-4 text-base leading-relaxed">
               Vallejo Legend. Founder of Shot Records.
               Brother of E-40. Member of The Click.
             </p>
@@ -102,7 +102,7 @@ export function Footer({
         <div className="border-t border-gray/30 mt-12 pt-12">
           <div className="max-w-xl mx-auto text-center">
             <h4 className="footer-heading">Stay Connected</h4>
-            <p className="text-white/60 mb-6">
+            <p className="text-white/60 mb-6 text-base">
               Get exclusive drops, tour updates, and new music first.
             </p>
             <form className="flex gap-3 max-w-md mx-auto">

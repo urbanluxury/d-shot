@@ -241,16 +241,16 @@ function ArticleCard({
           </div>
         )}
       </div>
-      <div className="flex items-center gap-3 text-xs text-white/50 mb-2">
+      <div className="flex items-center gap-3 text-sm text-white/50 mb-2">
         <span className="text-champagne font-medium">{article.blogTitle}</span>
         <span>&bull;</span>
         <time dateTime={article.publishedAt}>{publishedDate}</time>
       </div>
-      <h3 className="font-display uppercase text-white text-lg group-hover:text-champagne transition-colors line-clamp-2">
+      <h3 className="font-display uppercase text-white text-xl group-hover:text-champagne transition-colors line-clamp-2">
         {article.title}
       </h3>
       {article.excerpt && (
-        <p className="text-white/60 text-sm mt-2 line-clamp-2">{article.excerpt}</p>
+        <p className="text-white/60 text-base mt-2 line-clamp-2">{article.excerpt}</p>
       )}
     </Link>
   );
@@ -286,12 +286,12 @@ function ArticleListItem({article}: {article: any}) {
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 text-xs text-white/50 mb-1">
+        <div className="flex items-center gap-2 text-sm text-white/50 mb-1">
           <span className="text-champagne">{article.blogTitle}</span>
           <span>&bull;</span>
           <time dateTime={article.publishedAt}>{publishedDate}</time>
         </div>
-        <h3 className="font-display uppercase text-white text-sm group-hover:text-champagne transition-colors line-clamp-2">
+        <h3 className="font-display uppercase text-white text-base group-hover:text-champagne transition-colors line-clamp-2">
           {article.title}
         </h3>
       </div>
