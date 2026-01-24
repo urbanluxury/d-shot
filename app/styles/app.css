@@ -1,4 +1,4 @@
-@import url("https://use.typekit.net/xxx5cpw.css");
+@import url('https://fonts.googleapis.com/css2?family=Luxurious+Script&display=swap');
 @import 'tailwindcss';
 
 /* D-Shot Brand Theme */
@@ -57,7 +57,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Script Font for Main Headers */
 .font-script {
-  font-family: "sloop-script-one", sans-serif !important;
+  font-family: "Luxurious Script", cursive !important;
   text-transform: none !important;
   letter-spacing: normal !important;
   font-weight: 400;
