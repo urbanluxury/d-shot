@@ -387,7 +387,40 @@ interface CollectionProducts {
   'exclusives': any[];
 }
 
-// New Arrivals Section with Tabs
+// Color mapping for visual swatches on homepage
+const COLOR_MAP: Record<string, string> = {
+  'Black': '#000000',
+  'White': '#FFFFFF',
+  'Black/Gold': '#000000',
+  'All Black': '#000000',
+  'Navy': '#1a237e',
+  'Burgundy': '#722F37',
+  'Red': '#d32f2f',
+  'Blue': '#1976d2',
+  'Green': '#388e3c',
+  'Gray': '#757575',
+  'Grey': '#757575',
+  'Gold': '#FFD700',
+  'Silver': '#C0C0C0',
+  'Maroon': '#800000',
+  'Forest': '#228B22',
+};
+
+function getProductColorSwatches(product: any): {color: string; value: string}[] {
+  const colorOption = product.variants?.nodes
+    ?.flatMap((v: any) => v.selectedOptions)
+    ?.filter((opt: any) => opt.name === 'Color' || opt.name === 'Style');
+
+  if (!colorOption || colorOption.length === 0) return [];
+
+  const uniqueColors = [...new Set(colorOption.map((opt: any) => opt.value))] as string[];
+  return uniqueColors.map((value) => ({
+    value,
+    color: COLOR_MAP[value] || '#888888',
+  }));
+}
+
+// New Arrivals Section with Tabs - White Background Merchandise Section
 function NewArrivalsSection({collectionProducts}: {collectionProducts: CollectionProducts}) {
   const [activeTab, setActiveTab] = useState<keyof CollectionProducts>('new-arrivals');
 
@@ -395,12 +428,12 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
   const activeTabLabel = PRODUCT_TABS.find(t => t.id === activeTab)?.label || 'New Arrivals';
 
   return (
-    <section className="section bg-black">
+    <section className="section bg-white">
       <div className="container">
         <div className="section-header">
-          <span className="badge-champagne mb-4">Shop Collection</span>
-          <h2 className="section-title">Featured Products</h2>
-          <p className="section-subtitle">Official Shot Caller Merchandise</p>
+          <span className="badge-merlot mb-4">Shop Collection</span>
+          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Featured Products</h2>
+          <p className="text-lg text-black/60">Official Shot Caller Merchandise</p>
         </div>
 
         {/* Tab Navigation */}
@@ -411,8 +444,8 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
               onClick={() => setActiveTab(tab.id as keyof CollectionProducts)}
               className={`px-6 py-3 rounded-full text-base font-medium transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'bg-champagne text-black'
-                  : 'bg-dark-gray text-white/70 hover:bg-gray hover:text-white'
+                  ? 'bg-merlot text-white'
+                  : 'bg-gray-100 text-black/70 hover:bg-gray-200 hover:text-black'
               }`}
             >
               {tab.label}
@@ -423,46 +456,67 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
         {/* Product Grid */}
         {products.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {products.slice(0, 8).map((product: any) => (
-              <Link
-                key={product.id}
-                to={`/products/${product.handle}`}
-                className="group"
-              >
-                <div className="aspect-square bg-dark-gray rounded-lg overflow-hidden mb-3">
-                  {product.featuredImage ? (
-                    <Image
-                      alt={product.featuredImage.altText || product.title}
-                      data={product.featuredImage}
-                      aspectRatio="1/1"
-                      sizes="(min-width: 768px) 25vw, 50vw"
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/20">
-                      <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+            {products.slice(0, 8).map((product: any) => {
+              const colorSwatches = getProductColorSwatches(product);
+              return (
+                <Link
+                  key={product.id}
+                  to={`/products/${product.handle}`}
+                  className="group"
+                >
+                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
+                    {product.featuredImage ? (
+                      <Image
+                        alt={product.featuredImage.altText || product.title}
+                        data={product.featuredImage}
+                        aspectRatio="1/1"
+                        sizes="(min-width: 768px) 25vw, 50vw"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300">
+                        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-display uppercase text-black text-base group-hover:text-merlot transition-colors truncate">
+                    {product.title}
+                  </h3>
+                  <p className="text-merlot font-display mt-1">
+                    <Money data={product.priceRange.minVariantPrice} />
+                  </p>
+                  {/* Color Swatches */}
+                  {colorSwatches.length > 0 && (
+                    <div className="flex items-center gap-1 mt-2">
+                      {colorSwatches.slice(0, 4).map((swatch, i) => (
+                        <div
+                          key={i}
+                          className="w-5 h-5 rounded-full border border-gray-300"
+                          style={{backgroundColor: swatch.color}}
+                          title={swatch.value}
+                        />
+                      ))}
+                      {colorSwatches.length > 4 && (
+                        <span className="text-sm text-black/60 ml-1">
+                          +{colorSwatches.length - 4}
+                        </span>
+                      )}
                     </div>
                   )}
-                </div>
-                <h3 className="font-display uppercase text-white text-base group-hover:text-champagne transition-colors truncate">
-                  {product.title}
-                </h3>
-                <p className="text-champagne font-display mt-1">
-                  <Money data={product.priceRange.minVariantPrice} />
-                </p>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-white/60">No products in this collection yet.</p>
+            <p className="text-black/60">No products in this collection yet.</p>
           </div>
         )}
 
         <div className="text-center mt-10">
-          <Link to={`/collections/${activeTab}`} className="btn-outline">
+          <Link to={`/collections/${activeTab}`} className="btn-primary">
             View All {activeTabLabel}
           </Link>
         </div>
@@ -756,116 +810,71 @@ const EVENTS_QUERY = `#graphql
   }
 ` as const;
 
+const HOMEPAGE_PRODUCT_FRAGMENT = `#graphql
+  fragment HomepageProduct on Product {
+    id
+    title
+    handle
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+    featuredImage {
+      id
+      url
+      altText
+      width
+      height
+    }
+    variants(first: 10) {
+      nodes {
+        selectedOptions {
+          name
+          value
+        }
+      }
+    }
+  }
+` as const;
+
 const HOMEPAGE_COLLECTIONS_QUERY = `#graphql
+  ${HOMEPAGE_PRODUCT_FRAGMENT}
   query HomepageCollections($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     newArrivals: collection(handle: "new-arrivals") {
       products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
+          ...HomepageProduct
         }
       }
     }
     apparel: collection(handle: "apparel") {
       products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
+          ...HomepageProduct
         }
       }
     }
     accessories: collection(handle: "accessories") {
       products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
+          ...HomepageProduct
         }
       }
     }
     shotGlasses: collection(handle: "shot-glasses") {
       products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
+          ...HomepageProduct
         }
       }
     }
     exclusives: collection(handle: "exclusives") {
       products(first: 8, sortKey: CREATED, reverse: true) {
         nodes {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          featuredImage {
-            id
-            url
-            altText
-            width
-            height
-          }
+          ...HomepageProduct
         }
       }
     }

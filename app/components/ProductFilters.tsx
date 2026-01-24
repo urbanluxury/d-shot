@@ -74,7 +74,7 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
     <div className="space-y-6">
       {/* Categories */}
       <div>
-        <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Categories</h4>
+        <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Categories</h4>
         <nav className="space-y-3">
           {CATEGORIES.map((cat) => (
             <Link
@@ -82,8 +82,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
               to={`/collections/${cat.handle}`}
               className={`block text-base transition-colors py-1 ${
                 currentHandle === cat.handle
-                  ? 'text-champagne font-medium'
-                  : 'text-white/70 hover:text-champagne'
+                  ? 'text-merlot font-medium'
+                  : 'text-black/70 hover:text-merlot'
               }`}
             >
               {cat.title}
@@ -94,10 +94,10 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Clear Filters */}
       {hasFilters && (
-        <div className="pt-4 border-t border-white/10">
+        <div className="pt-4 border-t border-black/10">
           <button
             onClick={clearFilters}
-            className="text-champagne text-base hover:underline"
+            className="text-merlot text-base hover:underline"
           >
             Clear All Filters
           </button>
@@ -106,8 +106,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Product Type */}
       {productTypes.length > 0 && (
-        <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Product Type</h4>
+        <div className="pt-4 border-t border-black/10">
+          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Product Type</h4>
           <div className="space-y-3">
             {productTypes.map((type) => (
               <label key={type} className="flex items-center gap-3 cursor-pointer group py-1">
@@ -116,9 +116,9 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                   name="productType"
                   checked={activeType === type}
                   onChange={() => setFilter('type', activeType === type ? '' : type)}
-                  className="w-5 h-5 border-white/30 bg-transparent text-champagne focus:ring-champagne"
+                  className="w-5 h-5 border-black/30 bg-transparent text-merlot focus:ring-merlot"
                 />
-                <span className="text-white/70 text-base group-hover:text-white">{type}</span>
+                <span className="text-black/70 text-base group-hover:text-black">{type}</span>
               </label>
             ))}
           </div>
@@ -127,8 +127,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Size */}
       {sizeOptions.length > 0 && (
-        <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Size</h4>
+        <div className="pt-4 border-t border-black/10">
+          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Size</h4>
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((size) => (
               <button
@@ -136,8 +136,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                 onClick={() => setFilter('size', activeSize === size ? '' : size)}
                 className={`px-4 py-2 text-base rounded border transition-colors ${
                   activeSize === size
-                    ? 'bg-champagne text-black border-champagne'
-                    : 'border-white/30 text-white/70 hover:border-champagne hover:text-champagne'
+                    ? 'bg-merlot text-white border-merlot'
+                    : 'border-black/30 text-black/70 hover:border-merlot hover:text-merlot'
                 }`}
               >
                 {size}
@@ -149,8 +149,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Brand */}
       {vendors.length > 1 && (
-        <div className="pt-4 border-t border-white/10">
-          <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Brand</h4>
+        <div className="pt-4 border-t border-black/10">
+          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Brand</h4>
           <div className="space-y-3">
             {vendors.map((vendor) => (
               <label key={vendor} className="flex items-center gap-3 cursor-pointer group py-1">
@@ -159,9 +159,9 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                   name="vendor"
                   checked={activeVendor === vendor}
                   onChange={() => setFilter('vendor', activeVendor === vendor ? '' : vendor)}
-                  className="w-5 h-5 border-white/30 bg-transparent text-champagne focus:ring-champagne"
+                  className="w-5 h-5 border-black/30 bg-transparent text-merlot focus:ring-merlot"
                 />
-                <span className="text-white/70 text-base group-hover:text-white">{vendor}</span>
+                <span className="text-black/70 text-base group-hover:text-black">{vendor}</span>
               </label>
             ))}
           </div>
@@ -169,8 +169,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
       )}
 
       {/* Price Range */}
-      <div className="pt-4 border-t border-white/10">
-        <h4 className="text-white/60 text-base uppercase tracking-wider mb-3">Price</h4>
+      <div className="pt-4 border-t border-black/10">
+        <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Price</h4>
         <div className="space-y-2">
           {priceRanges.map((range) => (
             <button
@@ -181,8 +181,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
               )}
               className={`block w-full text-left px-4 py-3 text-base rounded transition-colors ${
                 activeMinPrice === range.min && activeMaxPrice === range.max
-                  ? 'bg-champagne/20 text-champagne'
-                  : 'text-white/70 hover:bg-white/5 hover:text-white'
+                  ? 'bg-merlot/20 text-merlot'
+                  : 'text-black/70 hover:bg-black/5 hover:text-black'
               }`}
             >
               {range.label}

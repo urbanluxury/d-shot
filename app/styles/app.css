@@ -452,3 +452,39 @@ button.reset {
     overflow: hidden;
   }
 }
+
+/* White background merchandise sections (like Budeboy reference) */
+.merch-section-white {
+  @apply bg-white;
+}
+
+.merch-section-white .section-title {
+  @apply text-black;
+}
+
+.merch-section-white .section-subtitle {
+  @apply text-black/60;
+}
+
+/* Color Swatch Circles for product variants */
+.color-swatch {
+  @apply w-5 h-5 rounded-full border border-gray-300 cursor-pointer transition-transform hover:scale-110;
+}
+
+.color-swatch.selected {
+  @apply ring-2 ring-merlot ring-offset-1;
+}
+
+/* Product Card Light Theme (for white background sections) */
+.product-card-light {
+  @apply bg-gray-100 rounded-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02] cursor-pointer;
+}
+
+.product-card-light:hover .product-card-title {
+  @apply text-merlot;
+}
+
+/* Collections page white background styling */
+.collections-grid {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6;
+}

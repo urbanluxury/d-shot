@@ -17,12 +17,19 @@ import {ProductForm} from '~/components/ProductForm';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
+  const product = data?.product;
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `${product?.title ?? ''} | D-Shot Official Store`},
+    {
+      name: 'description',
+      content: product?.description?.substring(0, 160) || `Shop ${product?.title} from D-Shot Official Store. Authentic Bay Area merchandise from the legendary Shot Caller.`,
+    },
     {
       rel: 'canonical',
-      href: `/products/${data?.product.handle}`,
+      href: `/products/${product?.handle}`,
     },
+    {property: 'og:title', content: `${product?.title} | D-Shot Official`},
+    {property: 'og:type', content: 'product'},
   ];
 };
 

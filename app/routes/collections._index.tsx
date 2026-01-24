@@ -53,18 +53,23 @@ export default function Collections() {
         subtitle="Shop the Official D-Shot Catalog"
         label="Browse"
       />
-      <PaginatedResourceSection<CollectionFragment>
-        connection={collections}
-        resourcesClassName="collections-grid"
-      >
-        {({node: collection, index}) => (
-          <CollectionItem
-            key={collection.id}
-            collection={collection}
-            index={index}
-          />
-        )}
-      </PaginatedResourceSection>
+      {/* White background merchandise section */}
+      <div className="bg-white py-12">
+        <div className="container">
+          <PaginatedResourceSection<CollectionFragment>
+            connection={collections}
+            resourcesClassName="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          >
+            {({node: collection, index}) => (
+              <CollectionItem
+                key={collection.id}
+                collection={collection}
+                index={index}
+              />
+            )}
+          </PaginatedResourceSection>
+        </div>
+      </div>
     </div>
   );
 }
@@ -78,21 +83,26 @@ function CollectionItem({
 }) {
   return (
     <Link
-      className="collection-item"
+      className="group block"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
     >
-      {collection?.image && (
-        <Image
-          alt={collection.image.altText || collection.title}
-          aspectRatio="1/1"
-          data={collection.image}
-          loading={index < 3 ? 'eager' : undefined}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h5>{collection.title}</h5>
+      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
+        {collection?.image && (
+          <Image
+            alt={collection.image.altText || collection.title}
+            aspectRatio="1/1"
+            data={collection.image}
+            loading={index < 3 ? 'eager' : undefined}
+            sizes="(min-width: 45em) 400px, 100vw"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+        )}
+      </div>
+      <h5 className="font-display uppercase text-black text-lg group-hover:text-merlot transition-colors text-center">
+        {collection.title}
+      </h5>
     </Link>
   );
 }

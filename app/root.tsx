@@ -65,6 +65,34 @@ export function links() {
   ];
 }
 
+// Default meta tags for SEO - D-Shot is E-40's blood brother and founding member of The Click
+export function meta() {
+  return [
+    {title: 'D-Shot Official Store | Shot Records - Bay Area Legend'},
+    {
+      name: 'description',
+      content: 'Official store of D-Shot (Danell Stevens), founding member of The Click and blood brother of E-40. Shop exclusive merch, vinyl, shot glasses, and music from the Vallejo hip-hop legend. Est. 1995 - Shot Records.',
+    },
+    {
+      name: 'keywords',
+      content: 'D-Shot, The Click, E-40, Vallejo, Bay Area hip hop, Shot Records, Shot Caller, mobb music, West Coast rap, official merchandise',
+    },
+    {property: 'og:type', content: 'website'},
+    {property: 'og:site_name', content: 'D-Shot Official'},
+    {property: 'og:title', content: 'D-Shot Official Store | Bay Area Legend'},
+    {
+      property: 'og:description',
+      content: 'Official store of D-Shot, founding member of The Click and blood brother of E-40. Shop exclusive merch, vinyl, and music from the Vallejo legend.',
+    },
+    {name: 'twitter:card', content: 'summary_large_image'},
+    {name: 'twitter:title', content: 'D-Shot Official Store'},
+    {
+      name: 'twitter:description',
+      content: 'Official merch from D-Shot - Bay Area legend, blood brother of E-40, founding member of The Click.',
+    },
+  ];
+}
+
 export async function loader(args: Route.LoaderArgs) {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
