@@ -57,6 +57,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Script Font for Main Headers */
 .font-script {
   font-family: Cinzel, serif !important;
+  font-size: 24px !important;
   text-transform: none !important;
   letter-spacing: normal !important;
   font-weight: 400;
