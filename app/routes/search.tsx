@@ -13,7 +13,7 @@ import {
 import type {RegularSearchQuery, PredictiveSearchQuery} from 'storefrontapi.generated';
 
 export const meta: Route.MetaFunction = () => {
-  return [{title: `Hydrogen | Search`}];
+  return [{title: `Search | D-Shot Official Store`}];
 };
 
 export async function loader({request, context}: Route.LoaderArgs) {
@@ -40,37 +40,44 @@ export default function SearchPage() {
   if (type === 'predictive') return null;
 
   return (
-    <div className="search">
-      <h1>Search</h1>
-      <SearchForm>
-        {({inputRef}) => (
-          <>
-            <input
-              defaultValue={term}
-              name="q"
-              placeholder="Search…"
-              ref={inputRef}
-              type="search"
-            />
-            &nbsp;
-            <button type="submit">Search</button>
-          </>
-        )}
-      </SearchForm>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      {!term || !result?.total ? (
-        <SearchResults.Empty />
-      ) : (
-        <SearchResults result={result} term={term}>
-          {({articles, pages, products, term}) => (
-            <div>
-              <SearchResults.Products products={products} term={term} />
-              <SearchResults.Pages pages={pages} term={term} />
-              <SearchResults.Articles articles={articles} term={term} />
+    <div className="search min-h-screen bg-white">
+      <div className="container py-12">
+        <h1 className="text-4xl font-display uppercase text-black mb-8">Search</h1>
+        <SearchForm>
+          {({inputRef}) => (
+            <div className="flex gap-4 mb-8">
+              <input
+                defaultValue={term}
+                name="q"
+                placeholder="Search products..."
+                ref={inputRef}
+                type="search"
+                className="flex-1 px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg text-black focus:border-merlot focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-merlot text-white font-display uppercase rounded-lg hover:bg-merlot-dark transition-colors"
+              >
+                Search
+              </button>
             </div>
           )}
-        </SearchResults>
-      )}
+        </SearchForm>
+        {error && <p className="text-red-600 mb-4">{error}</p>}
+        {!term || !result?.total ? (
+          <SearchResults.Empty />
+        ) : (
+          <SearchResults result={result} term={term}>
+            {({articles, pages, products, term}) => (
+              <div className="space-y-8">
+                <SearchResults.Products products={products} term={term} />
+                <SearchResults.Pages pages={pages} term={term} />
+                <SearchResults.Articles articles={articles} term={term} />
+              </div>
+            )}
+          </SearchResults>
+        )}
+      </div>
       <Analytics.SearchView data={{searchTerm: term, searchResults: result}} />
     </div>
   );

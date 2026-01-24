@@ -8,6 +8,25 @@ import {AddToCartButton} from './AddToCartButton';
 import {useAside} from './Aside';
 import type {ProductFragment} from 'storefrontapi.generated';
 
+// Color mapping for visual swatches
+const COLOR_SWATCH_MAP: Record<string, string> = {
+  'Black': '#000000',
+  'White': '#FFFFFF',
+  'Black/Gold': '#000000',
+  'All Black': '#000000',
+  'Navy': '#1a237e',
+  'Burgundy': '#722F37',
+  'Red': '#d32f2f',
+  'Blue': '#1976d2',
+  'Green': '#388e3c',
+  'Gray': '#757575',
+  'Grey': '#757575',
+  'Gold': '#FFD700',
+  'Silver': '#C0C0C0',
+  'Maroon': '#800000',
+  'Forest': '#228B22',
+};
+
 export function ProductForm({
   productOptions,
   selectedVariant,
@@ -23,9 +42,12 @@ export function ProductForm({
         // If there is only a single value in the option values, don't display the option
         if (option.optionValues.length === 1) return null;
 
+        // Check if this is a color option
+        const isColorOption = option.name.toLowerCase() === 'color' || option.name.toLowerCase() === 'style';
+
         return (
           <div className="product-options" key={option.name}>
-            <h5 className="text-white/80 uppercase tracking-wider text-sm mb-3">{option.name}</h5>
+            <h5 className="text-black/80 uppercase tracking-wider text-sm mb-3">{option.name}</h5>
             <div className="flex flex-wrap gap-2">
               {option.optionValues.map((value) => {
                 const {
@@ -39,10 +61,55 @@ export function ProductForm({
                   swatch,
                 } = value;
 
+                // For color options, show visual swatches (circles)
+                const colorHex = COLOR_SWATCH_MAP[name] || swatch?.color;
+                if (isColorOption && colorHex) {
+                  const swatchClasses = `w-10 h-10 rounded-full border-2 transition-all ${
+                    selected
+                      ? 'border-merlot ring-2 ring-merlot ring-offset-2'
+                      : 'border-gray-300 hover:border-merlot'
+                  } ${!available ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`;
+
+                  if (isDifferentProduct) {
+                    return (
+                      <Link
+                        className={swatchClasses}
+                        key={option.name + name}
+                        prefetch="intent"
+                        preventScrollReset
+                        replace
+                        to={`/products/${handle}?${variantUriQuery}`}
+                        title={name}
+                        style={{backgroundColor: colorHex}}
+                      />
+                    );
+                  } else {
+                    return (
+                      <button
+                        type="button"
+                        className={swatchClasses}
+                        key={option.name + name}
+                        disabled={!exists}
+                        title={name}
+                        style={{backgroundColor: colorHex}}
+                        onClick={() => {
+                          if (!selected) {
+                            void navigate(`?${variantUriQuery}`, {
+                              replace: true,
+                              preventScrollReset: true,
+                            });
+                          }
+                        }}
+                      />
+                    );
+                  }
+                }
+
+                // For non-color options (Size, etc), show text buttons
                 const baseClasses = `px-4 py-2 rounded-md text-sm font-medium transition-all ${
                   selected
-                    ? 'bg-champagne text-black border-2 border-champagne'
-                    : 'bg-dark-gray text-white border-2 border-white/20 hover:border-champagne'
+                    ? 'bg-merlot text-white border-2 border-merlot'
+                    : 'bg-gray-100 text-black border-2 border-gray-300 hover:border-merlot'
                 } ${!available ? 'opacity-40 cursor-not-allowed' : ''}`;
 
                 if (isDifferentProduct) {
@@ -100,7 +167,7 @@ export function ProductForm({
             : []
         }
       >
-        <span className="w-full py-4 px-8 bg-champagne hover:bg-white text-black font-display uppercase tracking-wider text-lg flex items-center justify-center gap-2 rounded-md transition-all">
+        <span className="w-full py-4 px-8 bg-merlot hover:bg-merlot-dark text-white font-display uppercase tracking-wider text-lg flex items-center justify-center gap-2 rounded-md transition-all">
           {selectedVariant?.availableForSale ? (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
