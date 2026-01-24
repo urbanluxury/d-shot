@@ -108,7 +108,7 @@ export default function Tour() {
       <section className="section bg-white">
         <div className="container">
           <div className="section-header">
-            <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Upcoming Shows</h2>
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-script text-black mb-4">Upcoming Shows</h2>
             <p className="text-lg text-black/60">Don't miss out</p>
           </div>
 

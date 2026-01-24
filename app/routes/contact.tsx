@@ -27,7 +27,7 @@ export default function Contact() {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-script text-black mb-8">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-script text-black mb-8">
                 Send a Message
               </h2>
               <form className="space-y-6">
@@ -102,7 +102,7 @@ export default function Contact() {
 
             {/* Contact Info */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-script text-black mb-8">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-script text-black mb-8">
                 Quick Contacts
               </h2>
 
