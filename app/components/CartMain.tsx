@@ -46,27 +46,30 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
 
 function CartEmpty({
   hidden = false,
+  layout = 'aside',
 }: {
   hidden: boolean;
   layout?: CartMainProps['layout'];
 }) {
   const {close} = useAside();
+  const isPage = layout === 'page';
+
   return (
     <div hidden={hidden} className="text-center py-16">
-      <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-dark-gray flex items-center justify-center">
-        <svg className="w-10 h-10 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${isPage ? 'bg-gray-100' : 'bg-dark-gray'}`}>
+        <svg className={`w-10 h-10 ${isPage ? 'text-gray-400' : 'text-white/40'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
         </svg>
       </div>
-      <h3 className="text-2xl font-display uppercase text-white mb-2">Your Cart is Empty</h3>
-      <p className="text-white/60 mb-8">
+      <h3 className={`text-2xl font-display uppercase mb-2 ${isPage ? 'text-black' : 'text-white'}`}>Your Cart is Empty</h3>
+      <p className={`mb-8 ${isPage ? 'text-black/60' : 'text-white/60'}`}>
         Looks like you haven&rsquo;t added anything yet.
       </p>
       <Link
         to="/collections/all"
         onClick={close}
         prefetch="viewport"
-        className="inline-block px-8 py-4 bg-champagne hover:bg-white text-black font-display uppercase tracking-wider rounded-md transition-all"
+        className="inline-block px-8 py-4 bg-merlot hover:bg-merlot-dark text-white font-display uppercase tracking-wider rounded-md transition-all"
       >
         Start Shopping
       </Link>

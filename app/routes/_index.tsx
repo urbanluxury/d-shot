@@ -252,11 +252,11 @@ function ShopCategories() {
   ];
 
   return (
-    <section className="section bg-dark">
+    <section className="section bg-gray-50">
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">Shop the Collection</h2>
-          <p className="section-subtitle">Official Shot Caller Merchandise</p>
+          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Shop the Collection</h2>
+          <p className="text-lg text-black/60">Official Shot Caller Merchandise</p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -264,13 +264,13 @@ function ShopCategories() {
             <Link
               key={category.handle}
               to={`/collections/${category.handle}`}
-              className="group bg-dark-gray rounded-lg p-8 text-center hover:bg-gray transition-all duration-300 hover:-translate-y-1"
+              className="group bg-white rounded-lg p-8 text-center hover:bg-gray-100 transition-all duration-300 hover:-translate-y-1 shadow-sm"
             >
-              <category.icon className="w-10 h-10 mx-auto mb-4 text-merlot group-hover:text-champagne transition-colors" />
-              <h3 className="text-xl font-display uppercase text-white group-hover:text-champagne transition-colors">
+              <category.icon className="w-10 h-10 mx-auto mb-4 text-merlot group-hover:text-merlot-dark transition-colors" />
+              <h3 className="text-xl font-display uppercase text-black group-hover:text-merlot transition-colors">
                 {category.title}
               </h3>
-              <p className="text-white/60 text-base mt-2">{category.description}</p>
+              <p className="text-black/60 text-base mt-2">{category.description}</p>
             </Link>
           ))}
         </div>
@@ -698,12 +698,12 @@ function InstagramFeed() {
   ];
 
   return (
-    <section className="section bg-dark">
+    <section className="section bg-gray-50">
       <div className="container">
         <div className="section-header">
-          <span className="badge-champagne mb-4">@dshot</span>
-          <h2 className="section-title">Follow The Journey</h2>
-          <p className="section-subtitle">Behind the scenes on Instagram</p>
+          <span className="badge-merlot mb-4">@dshot</span>
+          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Follow The Journey</h2>
+          <p className="text-lg text-black/60">Behind the scenes on Instagram</p>
         </div>
 
         <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4">
@@ -713,10 +713,10 @@ function InstagramFeed() {
               href="https://instagram.com/dshot"
               target="_blank"
               rel="noopener noreferrer"
-              className="aspect-square bg-dark-gray rounded-lg overflow-hidden group relative"
+              className="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative"
             >
               {/* Placeholder - would be real Instagram images */}
-              <div className="w-full h-full flex items-center justify-center text-white/10">
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
                 <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
                 </svg>
@@ -736,7 +736,7 @@ function InstagramFeed() {
             href="https://instagram.com/dshot"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline inline-flex items-center gap-2"
+            className="btn-outline-dark inline-flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>

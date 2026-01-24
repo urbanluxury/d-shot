@@ -107,6 +107,10 @@ a {
   @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200 border-2 border-white text-white hover:bg-white hover:text-black;
 }
 
+.btn-outline-dark {
+  @apply inline-flex items-center justify-center px-6 py-3 font-semibold uppercase tracking-wider transition-all duration-200 border-2 border-black text-black hover:bg-black hover:text-white;
+}
+
 /* Card Styles */
 .card {
   @apply bg-dark-gray rounded-lg overflow-hidden transition-transform duration-300 hover:scale-[1.02];

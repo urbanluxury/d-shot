@@ -24,11 +24,12 @@ export function CartLineItem({
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
+  const isPage = layout === 'page';
 
   return (
-    <li key={id} className="cart-line bg-dark-gray rounded-lg p-4 flex gap-4">
+    <li key={id} className={`cart-line rounded-lg p-4 flex gap-4 ${isPage ? 'bg-gray-100' : 'bg-dark-gray'}`}>
       {image && (
-        <div className="w-24 h-24 rounded-md overflow-hidden flex-shrink-0 bg-gray">
+        <div className={`w-24 h-24 rounded-md overflow-hidden flex-shrink-0 ${isPage ? 'bg-gray-200' : 'bg-gray'}`}>
           <Image
             alt={title}
             aspectRatio="1/1"
@@ -52,21 +53,21 @@ export function CartLineItem({
           }}
           className="block"
         >
-          <h4 className="font-display uppercase text-white text-lg truncate hover:text-champagne transition-colors">
+          <h4 className={`font-display uppercase text-lg truncate hover:text-merlot transition-colors ${isPage ? 'text-black' : 'text-white hover:text-champagne'}`}>
             {product.title}
           </h4>
         </Link>
         <div className="flex flex-wrap gap-2 mt-1">
           {selectedOptions.map((option) => (
-            <span key={option.name} className="text-white/50 text-sm">
+            <span key={option.name} className={`text-sm ${isPage ? 'text-black/50' : 'text-white/50'}`}>
               {option.name}: {option.value}
             </span>
           ))}
         </div>
-        <div className="text-champagne font-display text-lg mt-2">
+        <div className={`font-display text-lg mt-2 ${isPage ? 'text-merlot' : 'text-champagne'}`}>
           <ProductPrice price={line?.cost?.totalAmount} />
         </div>
-        <CartLineQuantity line={line} />
+        <CartLineQuantity line={line} layout={layout} />
       </div>
     </li>
   );
@@ -77,40 +78,41 @@ export function CartLineItem({
  * These controls are disabled when the line item is new, and the server
  * hasn't yet responded that it was successfully added to the cart.
  */
-function CartLineQuantity({line}: {line: CartLine}) {
+function CartLineQuantity({line, layout = 'aside'}: {line: CartLine; layout?: CartLayout}) {
   if (!line || typeof line?.quantity === 'undefined') return null;
   const {id: lineId, quantity, isOptimistic} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
+  const isPage = layout === 'page';
 
   return (
     <div className="flex items-center gap-4 mt-3">
-      <div className="flex items-center border border-white/20 rounded-md">
+      <div className={`flex items-center border rounded-md ${isPage ? 'border-gray-300' : 'border-white/20'}`}>
         <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
           <button
             aria-label="Decrease quantity"
             disabled={quantity <= 1 || !!isOptimistic}
             name="decrease-quantity"
             value={prevQuantity}
-            className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white disabled:opacity-30 transition-colors"
+            className={`w-8 h-8 flex items-center justify-center disabled:opacity-30 transition-colors ${isPage ? 'text-black/60 hover:text-black' : 'text-white/60 hover:text-white'}`}
           >
             <span>−</span>
           </button>
         </CartLineUpdateButton>
-        <span className="w-8 text-center text-white">{quantity}</span>
+        <span className={`w-8 text-center ${isPage ? 'text-black' : 'text-white'}`}>{quantity}</span>
         <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
           <button
             aria-label="Increase quantity"
             name="increase-quantity"
             value={nextQuantity}
             disabled={!!isOptimistic}
-            className="w-8 h-8 flex items-center justify-center text-white/60 hover:text-white disabled:opacity-30 transition-colors"
+            className={`w-8 h-8 flex items-center justify-center disabled:opacity-30 transition-colors ${isPage ? 'text-black/60 hover:text-black' : 'text-white/60 hover:text-white'}`}
           >
             <span>+</span>
           </button>
         </CartLineUpdateButton>
       </div>
-      <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
+      <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} layout={layout} />
     </div>
   );
 }
@@ -123,10 +125,13 @@ function CartLineQuantity({line}: {line: CartLine}) {
 function CartLineRemoveButton({
   lineIds,
   disabled,
+  layout = 'aside',
 }: {
   lineIds: string[];
   disabled: boolean;
+  layout?: CartLayout;
 }) {
+  const isPage = layout === 'page';
   return (
     <CartForm
       fetcherKey={getUpdateKey(lineIds)}
@@ -137,7 +142,7 @@ function CartLineRemoveButton({
       <button
         disabled={disabled}
         type="submit"
-        className="text-white/40 hover:text-red-500 text-sm transition-colors disabled:opacity-30"
+        className={`text-sm transition-colors disabled:opacity-30 ${isPage ? 'text-black/40 hover:text-red-500' : 'text-white/40 hover:text-red-500'}`}
       >
         Remove
       </button>

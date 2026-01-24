@@ -97,7 +97,7 @@ export default function Tour() {
         ];
 
   return (
-    <div className="tour-page">
+    <div className="tour-page bg-white">
       <PageHero
         title="Tour"
         subtitle="Catch D-Shot Live"
@@ -105,39 +105,39 @@ export default function Tour() {
       />
 
       {/* Upcoming Shows */}
-      <section className="section">
+      <section className="section bg-white">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Upcoming Shows</h2>
-            <p className="section-subtitle">Don't miss out</p>
+            <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Upcoming Shows</h2>
+            <p className="text-lg text-black/60">Don't miss out</p>
           </div>
 
           <div className="max-w-4xl mx-auto space-y-4">
             {upcomingShows.map((show) => (
               <div
                 key={show.id}
-                className="bg-dark-gray rounded-lg p-6 flex flex-col md:flex-row md:items-center gap-6 hover:bg-gray transition-colors"
+                className="bg-gray-100 rounded-lg p-6 flex flex-col md:flex-row md:items-center gap-6 hover:bg-gray-200 transition-colors"
               >
                 {/* Date */}
                 <div className="text-center md:text-left md:w-24">
-                  <p className="text-2xl font-display uppercase text-champagne">
+                  <p className="text-2xl font-display uppercase text-merlot">
                     {show.date}
                   </p>
-                  <p className="text-white/50 text-sm">{show.year}</p>
+                  <p className="text-black/50 text-sm">{show.year}</p>
                 </div>
 
                 {/* Venue Info */}
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-display uppercase text-white">
+                  <h3 className="text-xl font-display uppercase text-black">
                     {show.venue}
                   </h3>
-                  <p className="text-white/60">{show.city}</p>
+                  <p className="text-black/60">{show.city}</p>
                 </div>
 
                 {/* Ticket Button */}
                 <div>
                   {show.status === 'sold-out' ? (
-                    <span className="badge bg-gray text-white/50">Sold Out</span>
+                    <span className="badge bg-gray-300 text-black/50">Sold Out</span>
                   ) : (
                     <a
                       href={show.ticketUrl}
@@ -157,7 +157,7 @@ export default function Tour() {
 
           {upcomingShows.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-white/60 text-lg">
+              <p className="text-black/60 text-lg">
                 No upcoming shows at this time. Check back soon!
               </p>
             </div>
@@ -166,38 +166,38 @@ export default function Tour() {
       </section>
 
       {/* VIP Experience */}
-      <section className="section bg-dark">
+      <section className="section bg-gray-50">
         <div className="container">
-          <div className="bg-gradient-to-r from-champagne/10 to-merlot/20 rounded-xl p-8 md:p-12">
+          <div className="bg-gradient-to-r from-merlot/10 to-merlot/20 rounded-xl p-8 md:p-12">
             <div className="grid lg:grid-cols-2 gap-8 items-center">
               <div>
-                <span className="badge-champagne mb-4">Exclusive</span>
-                <h2 className="text-3xl md:text-4xl font-display uppercase text-white mt-4 mb-4">
+                <span className="badge-merlot mb-4">Exclusive</span>
+                <h2 className="text-3xl md:text-4xl font-display uppercase text-black mt-4 mb-4">
                   VIP Experience
                 </h2>
-                <p className="text-white/70 mb-6">
+                <p className="text-black/70 mb-6">
                   Get the ultimate D-Shot experience with VIP packages.
                   Includes meet & greet, exclusive merch, early entry, and more.
                 </p>
-                <ul className="space-y-2 text-white/80 mb-8">
+                <ul className="space-y-2 text-black/80 mb-8">
                   <li className="flex items-center gap-2">
-                    <span className="text-champagne">✓</span> Meet & Greet with D-Shot
+                    <span className="text-merlot">✓</span> Meet & Greet with D-Shot
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-champagne">✓</span> Exclusive VIP Merchandise
+                    <span className="text-merlot">✓</span> Exclusive VIP Merchandise
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-champagne">✓</span> Early Venue Access
+                    <span className="text-merlot">✓</span> Early Venue Access
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-champagne">✓</span> Photo Opportunity
+                    <span className="text-merlot">✓</span> Photo Opportunity
                   </li>
                 </ul>
-                <Link to="/collections/vip-packages" className="btn-secondary">
+                <Link to="/collections/vip-packages" className="btn-primary">
                   View VIP Packages
                 </Link>
               </div>
-              <div className="aspect-video bg-dark-gray rounded-lg flex items-center justify-center">
+              <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
                 <span className="text-6xl">🎤</span>
               </div>
             </div>
@@ -206,20 +206,20 @@ export default function Tour() {
       </section>
 
       {/* Newsletter / Notify */}
-      <section className="section">
+      <section className="section bg-white">
         <div className="container">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-display uppercase text-white mb-4">
+            <h2 className="text-3xl font-display uppercase text-black mb-4">
               Get Notified
             </h2>
-            <p className="text-white/60 mb-8">
+            <p className="text-black/60 mb-8">
               Be the first to know when new shows are announced in your area.
             </p>
             <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="input flex-1"
+                className="flex-1 bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black placeholder-black/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors"
               />
               <button type="submit" className="btn-primary whitespace-nowrap">
                 Notify Me
@@ -230,7 +230,7 @@ export default function Tour() {
       </section>
 
       {/* Booking CTA */}
-      <section className="section bg-dark">
+      <section className="section bg-white">
         <div className="container">
           <div className="bg-merlot rounded-xl p-8 md:p-12 text-center">
             <h2 className="text-3xl font-display uppercase text-white mb-4">

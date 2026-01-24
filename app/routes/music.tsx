@@ -80,7 +80,7 @@ export default function Music() {
   const {soloAlbums, clickAlbums, compilations} = useLoaderData<typeof loader>();
 
   return (
-    <div className="music-page">
+    <div className="music-page bg-white">
       <PageHero
         title="Music"
         subtitle="The Sound of the Bay"
@@ -88,13 +88,13 @@ export default function Music() {
       />
 
       {/* Streaming Links */}
-      <section className="section bg-dark">
+      <section className="section bg-gray-50">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-display uppercase text-white mb-4">
+            <h2 className="text-3xl font-display uppercase text-black mb-4">
               Stream Now
             </h2>
-            <p className="text-white/60">Available on all platforms</p>
+            <p className="text-black/60">Available on all platforms</p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
             <StreamingLink
@@ -120,27 +120,27 @@ export default function Music() {
             <StreamingLink
               platform="Tidal"
               href="https://tidal.com/artist/dshot"
-              color="bg-[#000000] border border-white/20"
+              color="bg-[#000000]"
             />
           </div>
         </div>
       </section>
 
       {/* Discography */}
-      <section className="section">
+      <section className="section bg-white">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Discography</h2>
-            <p className="section-subtitle">13 Albums • 1993–2024</p>
+            <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Discography</h2>
+            <p className="text-lg text-black/60">13 Albums • 1993–2024</p>
           </div>
 
           {/* Solo Albums */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-2xl font-display uppercase text-champagne">
+              <h3 className="text-2xl font-display uppercase text-merlot">
                 Solo Albums
               </h3>
-              <span className="text-white/50 text-sm">{soloAlbums.length} albums</span>
+              <span className="text-black/50 text-sm">{soloAlbums.length} albums</span>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {soloAlbums.map((album: any) => (
@@ -156,12 +156,12 @@ export default function Music() {
           {/* The Click */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-2xl font-display uppercase text-champagne">
+              <h3 className="text-2xl font-display uppercase text-merlot">
                 The Click
               </h3>
-              <span className="text-white/50 text-sm">{clickAlbums.length} albums</span>
+              <span className="text-black/50 text-sm">{clickAlbums.length} albums</span>
             </div>
-            <p className="text-white/60 mb-6 -mt-4">with E-40, Suga-T & B-Legit</p>
+            <p className="text-black/60 mb-6 -mt-4">with E-40, Suga-T & B-Legit</p>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {clickAlbums.map((album: any) => (
                 <AlbumCard
@@ -176,10 +176,10 @@ export default function Music() {
           {/* Compilation Albums */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-2xl font-display uppercase text-champagne">
+              <h3 className="text-2xl font-display uppercase text-merlot">
                 Compilations & Presented
               </h3>
-              <span className="text-white/50 text-sm">{compilations.length} albums</span>
+              <span className="text-black/50 text-sm">{compilations.length} albums</span>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {compilations.map((album: any) => (
@@ -194,11 +194,11 @@ export default function Music() {
 
           {/* Features & Productions */}
           <div>
-            <h3 className="text-2xl font-display uppercase text-champagne mb-8">
+            <h3 className="text-2xl font-display uppercase text-merlot mb-8">
               Features & Productions
             </h3>
-            <div className="bg-dark-gray rounded-lg p-6">
-              <p className="text-white/70 text-center">
+            <div className="bg-gray-100 rounded-lg p-6">
+              <p className="text-black/70 text-center">
                 D-Shot has produced and featured on countless tracks throughout his career.
                 <br />
                 Check streaming platforms for the complete catalog.
@@ -209,11 +209,11 @@ export default function Music() {
       </section>
 
       {/* Music Videos */}
-      <section className="section bg-dark">
+      <section className="section bg-gray-50">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">Videos</h2>
-            <p className="section-subtitle">Watch the latest visuals</p>
+            <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Videos</h2>
+            <p className="text-lg text-black/60">Watch the latest visuals</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -227,7 +227,7 @@ export default function Music() {
               href="https://youtube.com/@dshot"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline"
+              className="btn-outline-dark"
             >
               Subscribe on YouTube
             </a>
@@ -236,7 +236,7 @@ export default function Music() {
       </section>
 
       {/* Physical Music CTA */}
-      <section className="section">
+      <section className="section bg-white">
         <div className="container">
           <div className="bg-gradient-to-r from-merlot to-merlot-dark rounded-xl p-8 md:p-12">
             <div className="grid lg:grid-cols-2 gap-8 items-center">
@@ -315,9 +315,9 @@ function AlbumCard({
   return (
     <Link
       to={`/products/${product.handle}`}
-      className="group bg-dark-gray rounded-lg overflow-hidden hover:bg-gray transition-colors block"
+      className="group bg-gray-100 rounded-lg overflow-hidden hover:bg-gray-200 transition-colors block"
     >
-      <div className="aspect-square bg-gray flex items-center justify-center relative overflow-hidden">
+      <div className="aspect-square bg-gray-200 flex items-center justify-center relative overflow-hidden">
         {product.featuredImage ? (
           <Image
             data={product.featuredImage}
@@ -326,7 +326,7 @@ function AlbumCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <span className="text-6xl text-white/20 group-hover:text-white/40 transition-colors">
+          <span className="text-6xl text-gray-300 group-hover:text-gray-400 transition-colors">
             💿
           </span>
         )}
@@ -339,12 +339,12 @@ function AlbumCard({
       </div>
       <div className="p-4">
         <p className="text-xs text-merlot uppercase tracking-wider">{type}</p>
-        <h4 className="text-lg font-display uppercase text-white mt-1 group-hover:text-champagne transition-colors line-clamp-2">
+        <h4 className="text-lg font-display uppercase text-black mt-1 group-hover:text-merlot transition-colors line-clamp-2">
           {product.title}
         </h4>
         <div className="flex items-center justify-between mt-2">
-          <p className="text-white/50 text-sm">{year}</p>
-          <p className="text-champagne font-display">
+          <p className="text-black/50 text-sm">{year}</p>
+          <p className="text-merlot font-display">
             <Money data={product.priceRange.minVariantPrice} />
           </p>
         </div>
@@ -355,13 +355,13 @@ function AlbumCard({
 
 function VideoCard({title}: {title: string}) {
   return (
-    <div className="group bg-dark-gray rounded-lg overflow-hidden cursor-pointer">
-      <div className="aspect-video bg-gray flex items-center justify-center relative">
-        <span className="text-5xl text-white/20">▶️</span>
+    <div className="group bg-gray-100 rounded-lg overflow-hidden cursor-pointer">
+      <div className="aspect-video bg-gray-200 flex items-center justify-center relative">
+        <span className="text-5xl text-gray-400">▶️</span>
         <div className="absolute inset-0 bg-merlot/0 group-hover:bg-merlot/20 transition-colors" />
       </div>
       <div className="p-4">
-        <h4 className="text-lg font-display uppercase text-white group-hover:text-champagne transition-colors">
+        <h4 className="text-lg font-display uppercase text-black group-hover:text-merlot transition-colors">
           {title}
         </h4>
       </div>

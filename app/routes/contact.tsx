@@ -14,7 +14,7 @@ export const meta: Route.MetaFunction = () => {
 
 export default function Contact() {
   return (
-    <div className="contact-page">
+    <div className="contact-page bg-white">
       <PageHero
         title="Contact"
         subtitle="Get in Touch"
@@ -22,58 +22,58 @@ export default function Contact() {
       />
 
       {/* Contact Form & Info */}
-      <section className="section">
+      <section className="section bg-white">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div>
-              <h2 className="text-3xl font-display uppercase text-white mb-8">
+              <h2 className="text-3xl font-display uppercase text-black mb-8">
                 Send a Message
               </h2>
               <form className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="firstName" className="label">
+                    <label htmlFor="firstName" className="block text-sm uppercase tracking-wider text-black/60 mb-2">
                       First Name
                     </label>
                     <input
                       type="text"
                       id="firstName"
                       name="firstName"
-                      className="input"
+                      className="w-full bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black placeholder-black/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors"
                       required
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="label">
+                    <label htmlFor="lastName" className="block text-sm uppercase tracking-wider text-black/60 mb-2">
                       Last Name
                     </label>
                     <input
                       type="text"
                       id="lastName"
                       name="lastName"
-                      className="input"
+                      className="w-full bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black placeholder-black/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors"
                       required
                     />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="email" className="label">
+                  <label htmlFor="email" className="block text-sm uppercase tracking-wider text-black/60 mb-2">
                     Email
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    className="input"
+                    className="w-full bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black placeholder-black/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="subject" className="label">
+                  <label htmlFor="subject" className="block text-sm uppercase tracking-wider text-black/60 mb-2">
                     Subject
                   </label>
-                  <select id="subject" name="subject" className="input">
+                  <select id="subject" name="subject" className="w-full bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors">
                     <option value="">Select a subject</option>
                     <option value="booking">Booking Inquiry</option>
                     <option value="press">Press / Media</option>
@@ -83,14 +83,14 @@ export default function Contact() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="message" className="label">
+                  <label htmlFor="message" className="block text-sm uppercase tracking-wider text-black/60 mb-2">
                     Message
                   </label>
                   <textarea
                     id="message"
                     name="message"
                     rows={6}
-                    className="input resize-none"
+                    className="w-full bg-gray-100 border border-gray-300 rounded px-4 py-3 text-black placeholder-black/40 focus:border-merlot focus:ring-1 focus:ring-merlot transition-colors resize-none"
                     required
                   ></textarea>
                 </div>
@@ -102,70 +102,70 @@ export default function Contact() {
 
             {/* Contact Info */}
             <div>
-              <h2 className="text-3xl font-display uppercase text-white mb-8">
+              <h2 className="text-3xl font-display uppercase text-black mb-8">
                 Quick Contacts
               </h2>
 
               <div className="space-y-8">
                 {/* Booking */}
-                <div className="bg-dark-gray rounded-lg p-6">
-                  <h3 className="text-xl font-display uppercase text-champagne mb-3">
+                <div className="bg-gray-100 rounded-lg p-6">
+                  <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Booking
                   </h3>
-                  <p className="text-white/70 mb-4">
+                  <p className="text-black/70 mb-4">
                     For live performance bookings, festivals, and events.
                   </p>
                   <a
                     href="mailto:booking@shotcallerrecords.com"
-                    className="text-merlot hover:text-champagne transition-colors"
+                    className="text-merlot hover:text-merlot-dark transition-colors"
                   >
                     booking@shotcallerrecords.com
                   </a>
                 </div>
 
                 {/* Press */}
-                <div className="bg-dark-gray rounded-lg p-6">
-                  <h3 className="text-xl font-display uppercase text-champagne mb-3">
+                <div className="bg-gray-100 rounded-lg p-6">
+                  <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Press & Media
                   </h3>
-                  <p className="text-white/70 mb-4">
+                  <p className="text-black/70 mb-4">
                     Interviews, features, and media inquiries.
                   </p>
                   <a
                     href="mailto:press@shotcallerrecords.com"
-                    className="text-merlot hover:text-champagne transition-colors"
+                    className="text-merlot hover:text-merlot-dark transition-colors"
                   >
                     press@shotcallerrecords.com
                   </a>
                 </div>
 
                 {/* Business */}
-                <div className="bg-dark-gray rounded-lg p-6">
-                  <h3 className="text-xl font-display uppercase text-champagne mb-3">
+                <div className="bg-gray-100 rounded-lg p-6">
+                  <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Business
                   </h3>
-                  <p className="text-white/70 mb-4">
+                  <p className="text-black/70 mb-4">
                     Partnerships, collaborations, and licensing.
                   </p>
                   <a
                     href="mailto:info@shotcallerrecords.com"
-                    className="text-merlot hover:text-champagne transition-colors"
+                    className="text-merlot hover:text-merlot-dark transition-colors"
                   >
                     info@shotcallerrecords.com
                   </a>
                 </div>
 
                 {/* Customer Support */}
-                <div className="bg-dark-gray rounded-lg p-6">
-                  <h3 className="text-xl font-display uppercase text-champagne mb-3">
+                <div className="bg-gray-100 rounded-lg p-6">
+                  <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Store Support
                   </h3>
-                  <p className="text-white/70 mb-4">
+                  <p className="text-black/70 mb-4">
                     Order issues, returns, and shipping questions.
                   </p>
                   <a
                     href="mailto:support@shotcallerrecords.com"
-                    className="text-merlot hover:text-champagne transition-colors"
+                    className="text-merlot hover:text-merlot-dark transition-colors"
                   >
                     support@shotcallerrecords.com
                   </a>
@@ -174,7 +174,7 @@ export default function Contact() {
 
               {/* Social Links */}
               <div className="mt-12">
-                <h3 className="text-xl font-display uppercase text-white mb-6">
+                <h3 className="text-xl font-display uppercase text-black mb-6">
                   Follow D-Shot
                 </h3>
                 <div className="flex gap-4">
@@ -206,48 +206,48 @@ export default function Contact() {
       </section>
 
       {/* FAQ Teaser */}
-      <section className="section bg-dark">
+      <section className="section bg-gray-50">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-display uppercase text-white mb-6">
+            <h2 className="text-3xl font-display uppercase text-black mb-6">
               Frequently Asked Questions
             </h2>
 
             <div className="space-y-4 text-left">
-              <details className="bg-dark-gray rounded-lg p-6 group">
-                <summary className="text-lg font-semibold text-white cursor-pointer flex justify-between items-center">
+              <details className="bg-white rounded-lg p-6 group shadow-sm">
+                <summary className="text-lg font-semibold text-black cursor-pointer flex justify-between items-center">
                   How long does shipping take?
-                  <span className="text-champagne group-open:rotate-180 transition-transform">
+                  <span className="text-merlot group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <p className="text-white/70 mt-4">
+                <p className="text-black/70 mt-4">
                   US orders typically arrive within 5-7 business days. International
                   orders may take 2-4 weeks depending on location.
                 </p>
               </details>
 
-              <details className="bg-dark-gray rounded-lg p-6 group">
-                <summary className="text-lg font-semibold text-white cursor-pointer flex justify-between items-center">
+              <details className="bg-white rounded-lg p-6 group shadow-sm">
+                <summary className="text-lg font-semibold text-black cursor-pointer flex justify-between items-center">
                   Can I return or exchange an item?
-                  <span className="text-champagne group-open:rotate-180 transition-transform">
+                  <span className="text-merlot group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <p className="text-white/70 mt-4">
+                <p className="text-black/70 mt-4">
                   Yes, we accept returns within 30 days of purchase. Items must be
                   unworn and in original condition. See our refund policy for details.
                 </p>
               </details>
 
-              <details className="bg-dark-gray rounded-lg p-6 group">
-                <summary className="text-lg font-semibold text-white cursor-pointer flex justify-between items-center">
+              <details className="bg-white rounded-lg p-6 group shadow-sm">
+                <summary className="text-lg font-semibold text-black cursor-pointer flex justify-between items-center">
                   How can I book D-Shot for an event?
-                  <span className="text-champagne group-open:rotate-180 transition-transform">
+                  <span className="text-merlot group-open:rotate-180 transition-transform">
                     ▼
                   </span>
                 </summary>
-                <p className="text-white/70 mt-4">
+                <p className="text-black/70 mt-4">
                   For booking inquiries, please email booking@shotcallerrecords.com
                   with your event details, date, location, and budget.
                 </p>
@@ -274,7 +274,7 @@ function SocialLink({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="w-12 h-12 rounded-full bg-gray flex items-center justify-center text-white/60 hover:bg-merlot hover:text-white transition-all"
+      className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-black/60 hover:bg-merlot hover:text-white transition-all"
       aria-label={label}
     >
       {icon === 'instagram' && (
