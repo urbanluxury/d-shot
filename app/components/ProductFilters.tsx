@@ -74,17 +74,17 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
     <div className="space-y-6">
       {/* Categories */}
       <div>
-        <h4 className="text-gray-500 text-sm uppercase tracking-wider mb-3">Categories</h4>
+        <h4 className="text-sm uppercase tracking-wider mb-3" style={{color: '#6b7280'}}>Categories</h4>
         <nav className="space-y-2">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.handle}
               to={`/collections/${cat.handle}`}
-              className={`block text-base transition-colors py-1 ${
-                currentHandle === cat.handle
-                  ? 'text-merlot font-semibold'
-                  : 'text-gray-800 hover:text-merlot'
-              }`}
+              className="block text-base transition-colors py-1"
+              style={{
+                color: currentHandle === cat.handle ? '#722F37' : '#1f2937',
+                fontWeight: currentHandle === cat.handle ? 600 : 400
+              }}
             >
               {cat.title}
             </Link>
@@ -94,10 +94,11 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Clear Filters */}
       {hasFilters && (
-        <div className="pt-4 border-t border-black/10">
+        <div className="pt-4" style={{borderTop: '1px solid rgba(0,0,0,0.1)'}}>
           <button
             onClick={clearFilters}
-            className="text-merlot text-base hover:underline"
+            className="text-base hover:underline"
+            style={{color: '#722F37'}}
           >
             Clear All Filters
           </button>
@@ -106,8 +107,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Product Type */}
       {productTypes.length > 0 && (
-        <div className="pt-4 border-t border-black/10">
-          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Product Type</h4>
+        <div className="pt-4" style={{borderTop: '1px solid rgba(0,0,0,0.1)'}}>
+          <h4 className="text-sm uppercase tracking-wider mb-3" style={{color: '#6b7280'}}>Product Type</h4>
           <div className="space-y-3">
             {productTypes.map((type) => (
               <label key={type} className="flex items-center gap-3 cursor-pointer group py-1">
@@ -116,9 +117,10 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                   name="productType"
                   checked={activeType === type}
                   onChange={() => setFilter('type', activeType === type ? '' : type)}
-                  className="w-5 h-5 border-black/30 bg-transparent text-merlot focus:ring-merlot"
+                  className="w-5 h-5 accent-merlot"
+                  style={{accentColor: '#722F37'}}
                 />
-                <span className="text-black/70 text-base group-hover:text-black">{type}</span>
+                <span className="text-base" style={{color: '#374151'}}>{type}</span>
               </label>
             ))}
           </div>
@@ -127,18 +129,19 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Size */}
       {sizeOptions.length > 0 && (
-        <div className="pt-4 border-t border-black/10">
-          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Size</h4>
+        <div className="pt-4" style={{borderTop: '1px solid rgba(0,0,0,0.1)'}}>
+          <h4 className="text-sm uppercase tracking-wider mb-3" style={{color: '#6b7280'}}>Size</h4>
           <div className="flex flex-wrap gap-2">
             {sizeOptions.map((size) => (
               <button
                 key={size}
                 onClick={() => setFilter('size', activeSize === size ? '' : size)}
-                className={`px-4 py-2 text-base rounded border transition-colors ${
-                  activeSize === size
-                    ? 'bg-merlot text-white border-merlot'
-                    : 'border-black/30 text-black/70 hover:border-merlot hover:text-merlot'
-                }`}
+                className="px-4 py-2 text-base rounded border transition-colors"
+                style={{
+                  backgroundColor: activeSize === size ? '#722F37' : 'transparent',
+                  color: activeSize === size ? '#ffffff' : '#374151',
+                  borderColor: activeSize === size ? '#722F37' : 'rgba(0,0,0,0.2)'
+                }}
               >
                 {size}
               </button>
@@ -149,8 +152,8 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
 
       {/* Brand */}
       {vendors.length > 1 && (
-        <div className="pt-4 border-t border-black/10">
-          <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Brand</h4>
+        <div className="pt-4" style={{borderTop: '1px solid rgba(0,0,0,0.1)'}}>
+          <h4 className="text-sm uppercase tracking-wider mb-3" style={{color: '#6b7280'}}>Brand</h4>
           <div className="space-y-3">
             {vendors.map((vendor) => (
               <label key={vendor} className="flex items-center gap-3 cursor-pointer group py-1">
@@ -159,9 +162,10 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
                   name="vendor"
                   checked={activeVendor === vendor}
                   onChange={() => setFilter('vendor', activeVendor === vendor ? '' : vendor)}
-                  className="w-5 h-5 border-black/30 bg-transparent text-merlot focus:ring-merlot"
+                  className="w-5 h-5"
+                  style={{accentColor: '#722F37'}}
                 />
-                <span className="text-black/70 text-base group-hover:text-black">{vendor}</span>
+                <span className="text-base" style={{color: '#374151'}}>{vendor}</span>
               </label>
             ))}
           </div>
@@ -169,25 +173,28 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
       )}
 
       {/* Price Range */}
-      <div className="pt-4 border-t border-black/10">
-        <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Price</h4>
+      <div className="pt-4" style={{borderTop: '1px solid rgba(0,0,0,0.1)'}}>
+        <h4 className="text-sm uppercase tracking-wider mb-3" style={{color: '#6b7280'}}>Price</h4>
         <div className="space-y-2">
-          {priceRanges.map((range) => (
-            <button
-              key={range.label}
-              onClick={() => setPriceRange(
-                activeMinPrice === range.min && activeMaxPrice === range.max ? '' : range.min,
-                activeMinPrice === range.min && activeMaxPrice === range.max ? '' : range.max
-              )}
-              className={`block w-full text-left px-4 py-3 text-base rounded transition-colors ${
-                activeMinPrice === range.min && activeMaxPrice === range.max
-                  ? 'bg-merlot/20 text-merlot'
-                  : 'text-black/70 hover:bg-black/5 hover:text-black'
-              }`}
-            >
-              {range.label}
-            </button>
-          ))}
+          {priceRanges.map((range) => {
+            const isActive = activeMinPrice === range.min && activeMaxPrice === range.max;
+            return (
+              <button
+                key={range.label}
+                onClick={() => setPriceRange(
+                  isActive ? '' : range.min,
+                  isActive ? '' : range.max
+                )}
+                className="block w-full text-left px-4 py-3 text-base rounded transition-colors"
+                style={{
+                  backgroundColor: isActive ? 'rgba(114, 47, 55, 0.2)' : 'transparent',
+                  color: isActive ? '#722F37' : '#374151'
+                }}
+              >
+                {range.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
