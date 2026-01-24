@@ -255,7 +255,7 @@ function ShopCategories() {
     <section className="section bg-gray-50">
       <div className="container">
         <div className="section-header">
-          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Shop the Collection</h2>
+          <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Shop the Collection</h2>
           <p className="text-lg text-black/60">Official Shot Caller Merchandise</p>
         </div>
 
@@ -289,7 +289,7 @@ function AboutTeaser() {
             <p className="text-merlot uppercase tracking-widest text-sm font-semibold mb-4">
               Vallejo Legend
             </p>
-            <h2 className="text-4xl md:text-5xl font-display uppercase text-white mb-6">
+            <h2 className="text-5xl md:text-7xl font-script text-white mb-6">
               D-Shot
             </h2>
             <p className="text-white/70 text-lg leading-relaxed mb-4">
@@ -432,7 +432,7 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
       <div className="container">
         <div className="section-header">
           <span className="badge-merlot mb-4">Shop Collection</span>
-          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Featured Products</h2>
+          <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Featured Products</h2>
           <p className="text-lg text-black/60">Official Shot Caller Merchandise</p>
         </div>
 
@@ -619,7 +619,7 @@ function TourDatesPreview({events}: {events: TourEvent[]}) {
       <div className="container">
         <div className="section-header">
           <span className="badge-champagne mb-4">On The Road</span>
-          <h2 className="section-title">Tour Dates</h2>
+          <h2 className="text-4xl md:text-6xl font-script text-white mb-4">Tour Dates</h2>
           <p className="section-subtitle">Catch D-Shot live</p>
         </div>
 
@@ -702,7 +702,7 @@ function InstagramFeed() {
       <div className="container">
         <div className="section-header">
           <span className="badge-merlot mb-4">@dshot</span>
-          <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Follow The Journey</h2>
+          <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Follow The Journey</h2>
           <p className="text-lg text-black/60">Behind the scenes on Instagram</p>
         </div>
 
@@ -755,7 +755,7 @@ function NewsletterSection() {
     <section className="section bg-gradient-to-r from-merlot to-merlot/80">
       <div className="container">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-display uppercase text-white mb-4">
+          <h2 className="text-4xl md:text-6xl font-script text-white mb-4">
             Stay in the Loop
           </h2>
           <p className="text-white/80 text-lg mb-8">

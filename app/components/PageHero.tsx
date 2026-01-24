@@ -32,7 +32,7 @@ export function PageHero({title, subtitle, label}: PageHeroProps) {
               {label}
             </p>
           )}
-          <h1 className="text-5xl md:text-7xl font-display uppercase text-white mb-4 drop-shadow-lg">
+          <h1 className="text-5xl md:text-7xl font-script text-white mb-4 drop-shadow-lg">
             {title}
           </h1>
           {subtitle && (

@@ -54,7 +54,7 @@ export default function About() {
                 </div>
               </div>
 
-              <h2 className="text-3xl font-display uppercase text-black mb-8">
+              <h2 className="text-4xl md:text-5xl font-script text-black mb-8">
                 From Vallejo to the World
               </h2>
               <p>
@@ -165,7 +165,7 @@ export default function About() {
       <section className="section bg-gray-50">
         <div className="container">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-4xl font-display uppercase text-black mb-6">
+            <h2 className="text-5xl md:text-6xl font-script text-black mb-6">
               The Click
             </h2>
             <p className="text-black/70 text-lg">
@@ -213,7 +213,7 @@ export default function About() {
             <p className="text-merlot uppercase tracking-widest text-sm font-semibold mb-4">
               Est. 1995
             </p>
-            <h2 className="text-4xl font-display uppercase text-black mb-6">
+            <h2 className="text-5xl md:text-6xl font-script text-black mb-6">
               Shot Records
             </h2>
             <p className="text-black/70 text-lg mb-4">

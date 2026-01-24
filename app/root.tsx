@@ -61,6 +61,14 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    {
+      rel: 'preconnect',
+      href: 'https://use.typekit.net',
+    },
+    {
+      rel: 'stylesheet',
+      href: 'https://use.typekit.net/xxx5cpw.css',
+    },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
   ];
 }

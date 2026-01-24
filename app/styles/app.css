@@ -20,6 +20,7 @@
   /* Font Families */
   --font-display: 'Bebas Neue', 'Oswald', system-ui, sans-serif;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-script: 'sloop-script-pro', 'Brush Script MT', cursive;
 
   /* Spacing */
   --header-height: 80px;
@@ -51,6 +52,14 @@ body {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   @apply font-display uppercase tracking-wide;
+}
+
+/* Script Font for Main Headers */
+.font-script {
+  font-family: var(--font-script);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
 }
 
 a {

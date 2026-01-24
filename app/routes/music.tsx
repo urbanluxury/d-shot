@@ -91,7 +91,7 @@ export default function Music() {
       <section className="section bg-gray-50">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-display uppercase text-black mb-4">
+            <h2 className="text-4xl md:text-6xl font-script text-black mb-4">
               Stream Now
             </h2>
             <p className="text-black/60">Available on all platforms</p>
@@ -130,7 +130,7 @@ export default function Music() {
       <section className="section bg-white">
         <div className="container">
           <div className="section-header">
-            <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Discography</h2>
+            <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Discography</h2>
             <p className="text-lg text-black/60">13 Albums • 1993–2024</p>
           </div>
 
@@ -212,7 +212,7 @@ export default function Music() {
       <section className="section bg-gray-50">
         <div className="container">
           <div className="section-header">
-            <h2 className="text-3xl md:text-5xl font-display uppercase text-black mb-4">Videos</h2>
+            <h2 className="text-4xl md:text-6xl font-script text-black mb-4">Videos</h2>
             <p className="text-lg text-black/60">Watch the latest visuals</p>
           </div>
 
@@ -242,7 +242,7 @@ export default function Music() {
             <div className="grid lg:grid-cols-2 gap-8 items-center">
               <div>
                 <span className="badge-champagne mb-4">Hard Copies Available</span>
-                <h2 className="text-4xl md:text-5xl font-display uppercase text-white mb-4 mt-4">
+                <h2 className="text-4xl md:text-6xl font-script text-white mb-4 mt-4">
                   Own the Collection
                 </h2>
                 <p className="text-white/80 mb-4 text-lg">
