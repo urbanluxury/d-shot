@@ -1,14 +1,12 @@
 #!/bin/bash
 
 # D-Shot Store Deployment Script
-# Deploys to Shopify Oxygen
-
-SHOP="shotrecords.myshopify.com"
+# Deploys to Shopify Oxygen via GitHub
 
 echo "🚀 Deploying D-Shot Store to Shopify Oxygen..."
 echo ""
 
-# Build the project first
+# Build the project first to check for errors
 echo "📦 Building project..."
 npm run build
 
@@ -18,11 +16,21 @@ if [ $? -ne 0 ]; then
 fi
 
 echo ""
-echo "☁️  Deploying to Oxygen..."
+echo "📝 Staging changes..."
 
-# Link and deploy with shop flag
-npx shopify hydrogen link --storefront shotrecords --shop "$SHOP" --force
-npx shopify hydrogen deploy --shop "$SHOP"
+# Add all changes
+git add .
+
+# Get commit message from argument or use default
+COMMIT_MSG="${1:-Update D-Shot Store}"
+
+echo "💾 Committing: $COMMIT_MSG"
+git commit -m "$COMMIT_MSG"
 
 echo ""
-echo "✅ Deployment complete!"
+echo "☁️  Pushing to GitHub (triggers Oxygen deployment)..."
+git push origin main
+
+echo ""
+echo "✅ Pushed to GitHub! Shopify Oxygen will deploy automatically."
+echo "🔗 Check deployment status at: https://admin.shopify.com/store/shotrecords/hydrogen"
