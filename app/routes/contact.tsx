@@ -112,12 +112,13 @@ export default function Contact() {
                   <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Booking
                   </h3>
-                  <p className="text-black/70 mb-4">
+                  <p className="text-gray-700 mb-4">
                     For live performance bookings, festivals, and events.
                   </p>
                   <a
                     href="mailto:booking@shotcallerrecords.com"
-                    className="text-merlot hover:text-merlot-dark transition-colors"
+                    className="font-medium underline hover:no-underline"
+                    style={{color: '#722F37'}}
                   >
                     booking@shotcallerrecords.com
                   </a>
@@ -128,12 +129,13 @@ export default function Contact() {
                   <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Press & Media
                   </h3>
-                  <p className="text-black/70 mb-4">
+                  <p className="text-gray-700 mb-4">
                     Interviews, features, and media inquiries.
                   </p>
                   <a
                     href="mailto:press@shotcallerrecords.com"
-                    className="text-merlot hover:text-merlot-dark transition-colors"
+                    className="font-medium underline hover:no-underline"
+                    style={{color: '#722F37'}}
                   >
                     press@shotcallerrecords.com
                   </a>
@@ -144,12 +146,13 @@ export default function Contact() {
                   <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Business
                   </h3>
-                  <p className="text-black/70 mb-4">
+                  <p className="text-gray-700 mb-4">
                     Partnerships, collaborations, and licensing.
                   </p>
                   <a
                     href="mailto:info@shotcallerrecords.com"
-                    className="text-merlot hover:text-merlot-dark transition-colors"
+                    className="font-medium underline hover:no-underline"
+                    style={{color: '#722F37'}}
                   >
                     info@shotcallerrecords.com
                   </a>
@@ -160,12 +163,13 @@ export default function Contact() {
                   <h3 className="text-xl font-display uppercase text-merlot mb-3">
                     Store Support
                   </h3>
-                  <p className="text-black/70 mb-4">
+                  <p className="text-gray-700 mb-4">
                     Order issues, returns, and shipping questions.
                   </p>
                   <a
                     href="mailto:support@shotcallerrecords.com"
-                    className="text-merlot hover:text-merlot-dark transition-colors"
+                    className="font-medium underline hover:no-underline"
+                    style={{color: '#722F37'}}
                   >
                     support@shotcallerrecords.com
                   </a>

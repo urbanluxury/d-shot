@@ -464,7 +464,7 @@ function NewArrivalsSection({collectionProducts}: {collectionProducts: Collectio
                   to={`/products/${product.handle}`}
                   className="group"
                 >
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3">
+                  <div className="aspect-square bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
                     {product.featuredImage ? (
                       <Image
                         alt={product.featuredImage.altText || product.title}

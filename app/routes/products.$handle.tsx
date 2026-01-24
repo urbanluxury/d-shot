@@ -119,7 +119,7 @@ export default function Product() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Product Image */}
             <div className="product-image-wrapper">
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              <div className="aspect-square bg-white border border-gray-200 rounded-lg overflow-hidden">
                 <ProductImage image={selectedVariant?.image} />
               </div>
             </div>

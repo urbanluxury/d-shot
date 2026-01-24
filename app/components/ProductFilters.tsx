@@ -74,16 +74,16 @@ export function ProductFilters({products, currentHandle}: ProductFiltersProps) {
     <div className="space-y-6">
       {/* Categories */}
       <div>
-        <h4 className="text-black/60 text-base uppercase tracking-wider mb-3">Categories</h4>
-        <nav className="space-y-3">
+        <h4 className="text-gray-500 text-sm uppercase tracking-wider mb-3">Categories</h4>
+        <nav className="space-y-2">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.handle}
               to={`/collections/${cat.handle}`}
               className={`block text-base transition-colors py-1 ${
                 currentHandle === cat.handle
-                  ? 'text-merlot font-medium'
-                  : 'text-black/70 hover:text-merlot'
+                  ? 'text-merlot font-semibold'
+                  : 'text-gray-800 hover:text-merlot'
               }`}
             >
               {cat.title}
