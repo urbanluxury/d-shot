@@ -185,8 +185,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <link rel="preconnect" href="https://use.typekit.net" />
-        <link rel="stylesheet" href="https://use.typekit.net/xxx5cpw.css" />
         <link rel="stylesheet" href={resetStyles}></link>
         <link rel="stylesheet" href={appStyles}></link>
         <Meta />
