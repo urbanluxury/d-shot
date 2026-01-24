@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useLoaderData, Link} from 'react-router';
 import type {Route} from './+types/_index';
 import {Image, Money} from '@shopify/hydrogen';
@@ -685,47 +685,74 @@ function TourDatesPreview({events}: {events: TourEvent[]}) {
   );
 }
 
-// Instagram Feed Section
+// Instagram Feed Section - Manual Posts
+const INSTAGRAM_POSTS = [
+  { id: 'C0wYFsCL2vC', type: 'reel' },
+  { id: 'DT23k45CgAb', type: 'reel' },
+  { id: 'DTzcKdHDi1S', type: 'post' },
+  { id: 'DTwaEi4CVgf', type: 'reel' },
+  { id: 'DTjmnQ4EalZ', type: 'reel' },
+  { id: 'DTSXBu1DnBb', type: 'reel' },
+  { id: 'DTGr1MqElYY', type: 'reel' },
+];
+
 function InstagramFeed() {
-  // Placeholder images - in production, would integrate with Instagram API
-  const placeholderImages = [
-    { id: 1, alt: 'D-Shot in studio' },
-    { id: 2, alt: 'Live performance' },
-    { id: 3, alt: 'Behind the scenes' },
-    { id: 4, alt: 'Fan meetup' },
-    { id: 5, alt: 'Album artwork' },
-    { id: 6, alt: 'Merch preview' },
-  ];
+  useEffect(() => {
+    // Load Instagram embed script
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Process embeds when script loads
+    script.onload = () => {
+      if ((window as any).instgrm) {
+        (window as any).instgrm.Embeds.process();
+      }
+    };
+
+    return () => {
+      const existingScript = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+    };
+  }, []);
 
   return (
     <section className="section bg-gray-50">
       <div className="container">
         <div className="section-header">
-          <span className="badge-merlot mb-4">@dshot</span>
+          <span className="badge-merlot mb-4">@therealdshot</span>
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-script text-black mb-4">Follow The Journey</h2>
           <p className="text-lg text-black/60">Behind the scenes on Instagram</p>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-4">
-          {placeholderImages.map((img) => (
+        {/* Instagram Posts Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {INSTAGRAM_POSTS.slice(0, 8).map((post) => (
             <a
-              key={img.id}
-              href="https://instagram.com/dshot"
+              key={post.id}
+              href={`https://www.instagram.com/${post.type === 'reel' ? 'reel' : 'p'}/${post.id}/`}
               target="_blank"
               rel="noopener noreferrer"
-              className="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative"
+              className="aspect-square bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-lg overflow-hidden group relative flex items-center justify-center"
             >
-              {/* Placeholder - would be real Instagram images */}
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
-                </svg>
-              </div>
+              {/* Instagram icon */}
+              <svg className="w-12 h-12 text-white/80 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              {/* Reel indicator */}
+              {post.type === 'reel' && (
+                <div className="absolute top-2 right-2">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                  </svg>
+                </div>
+              )}
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-merlot/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
-                </svg>
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">View on Instagram</span>
               </div>
             </a>
           ))}
@@ -733,7 +760,7 @@ function InstagramFeed() {
 
         <div className="text-center mt-10">
           <a
-            href="https://instagram.com/dshot"
+            href="https://www.instagram.com/therealdshot/"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-outline-dark inline-flex items-center gap-2"
@@ -741,7 +768,7 @@ function InstagramFeed() {
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/>
             </svg>
-            Follow @dshot
+            Follow @therealdshot
           </a>
         </div>
       </div>
