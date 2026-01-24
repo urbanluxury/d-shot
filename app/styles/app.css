@@ -56,9 +56,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Script Font for Main Headers */
 .font-script {
-  font-family: var(--font-script);
-  text-transform: none;
-  letter-spacing: normal;
+  font-family: "sloop-script-one", sans-serif !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
   font-weight: 400;
 }
 
