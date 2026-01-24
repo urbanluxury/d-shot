@@ -206,15 +206,17 @@ export default function Collection() {
                         <p className="text-merlot font-display text-lg mt-1">
                           <Money data={product.priceRange.minVariantPrice} />
                         </p>
-                        {/* Color Swatches */}
+                        {/* Color Swatches - Clickable links to specific variant */}
                         {colorSwatches.length > 0 && (
-                          <div className="flex items-center gap-1 mt-2">
+                          <div className="flex items-center gap-1 mt-2" onClick={(e) => e.preventDefault()}>
                             {colorSwatches.slice(0, 4).map((swatch, i) => (
-                              <div
+                              <Link
                                 key={i}
-                                className="w-5 h-5 rounded-full border border-gray-300"
+                                to={`/products/${product.handle}?Color=${encodeURIComponent(swatch.value)}`}
+                                className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-merlot hover:scale-110 transition-all"
                                 style={{backgroundColor: swatch.color}}
                                 title={swatch.value}
+                                onClick={(e) => e.stopPropagation()}
                               />
                             ))}
                             {colorSwatches.length > 4 && (

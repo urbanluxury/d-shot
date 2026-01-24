@@ -27,6 +27,44 @@ async function loadCriticalData({context, request}: Route.LoaderArgs) {
   return {products};
 }
 
+// Color mapping for visual swatches
+const COLOR_MAP: Record<string, string> = {
+  'Black': '#000000',
+  'White': '#FFFFFF',
+  'Black/Gold': '#000000',
+  'Black/White': '#000000',
+  'All Black': '#000000',
+  'Navy': '#1a237e',
+  'Navy/Gold': '#1a237e',
+  'Burgundy': '#722F37',
+  'Red': '#d32f2f',
+  'Blue': '#1976d2',
+  'Green': '#388e3c',
+  'Gray': '#757575',
+  'Grey': '#757575',
+  'Heather Gray': '#9e9e9e',
+  'Gold': '#FFD700',
+  'Silver': '#C0C0C0',
+  'Maroon': '#800000',
+  'Mauve': '#E0B0FF',
+  'Cream': '#FFFDD0',
+  'Khaki': '#C3B091',
+};
+
+function getColorSwatches(product: any): {color: string; value: string}[] {
+  const colorOption = product.variants?.nodes
+    ?.flatMap((v: any) => v.selectedOptions)
+    ?.filter((opt: any) => opt.name === 'Color' || opt.name === 'Style');
+
+  if (!colorOption || colorOption.length === 0) return [];
+
+  const uniqueColors = [...new Set(colorOption.map((opt: any) => opt.value))] as string[];
+  return uniqueColors.map((value) => ({
+    value,
+    color: COLOR_MAP[value] || '#888888',
+  }));
+}
+
 export default function Collection() {
   const {products} = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
@@ -125,37 +163,60 @@ export default function Collection() {
             {/* Product Grid */}
             {sortedProducts.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {sortedProducts.map((product: any, index: number) => (
-                  <Link
-                    key={product.id}
-                    to={`/products/${product.handle}`}
-                    className="group"
-                  >
-                    <div className="aspect-square bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
-                      {product.featuredImage ? (
-                        <Image
-                          alt={product.featuredImage.altText || product.title}
-                          data={product.featuredImage}
-                          loading={index < 8 ? 'eager' : 'lazy'}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300">
-                          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                {sortedProducts.map((product: any, index: number) => {
+                  const colorSwatches = getColorSwatches(product);
+                  return (
+                    <Link
+                      key={product.id}
+                      to={`/products/${product.handle}`}
+                      className="group"
+                    >
+                      <div className="aspect-square bg-white border border-gray-200 rounded-lg overflow-hidden mb-3">
+                        {product.featuredImage ? (
+                          <Image
+                            alt={product.featuredImage.altText || product.title}
+                            data={product.featuredImage}
+                            loading={index < 8 ? 'eager' : 'lazy'}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300">
+                            <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="font-display uppercase text-black text-base group-hover:text-merlot transition-colors line-clamp-2">
+                        {product.title}
+                      </h3>
+                      <p className="text-merlot font-display text-lg mt-1">
+                        <Money data={product.priceRange.minVariantPrice} />
+                      </p>
+                      {/* Color Swatches - Clickable links to specific variant */}
+                      {colorSwatches.length > 0 && (
+                        <div className="flex items-center gap-1 mt-2" onClick={(e) => e.preventDefault()}>
+                          {colorSwatches.slice(0, 4).map((swatch, i) => (
+                            <Link
+                              key={i}
+                              to={`/products/${product.handle}?Color=${encodeURIComponent(swatch.value)}`}
+                              className="w-6 h-6 rounded-full border-2 border-gray-300 hover:border-merlot hover:scale-110 transition-all"
+                              style={{backgroundColor: swatch.color}}
+                              title={swatch.value}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          ))}
+                          {colorSwatches.length > 4 && (
+                            <span className="text-sm text-black/60 ml-1">
+                              +{colorSwatches.length - 4}
+                            </span>
+                          )}
                         </div>
                       )}
-                    </div>
-                    <h3 className="font-display uppercase text-black text-base group-hover:text-merlot transition-colors line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <p className="text-merlot font-display text-lg mt-1">
-                      <Money data={product.priceRange.minVariantPrice} />
-                    </p>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-16">
