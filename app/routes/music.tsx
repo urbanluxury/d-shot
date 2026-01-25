@@ -42,9 +42,10 @@ const COMPILATION_HANDLES = [
 // YouTube Videos from Shot Films Media Inc
 // To add videos: Get the video ID from YouTube URL (the part after watch?v=)
 // Example: https://www.youtube.com/watch?v=ABC123 → id is 'ABC123'
-const YOUTUBE_VIDEOS: { id: string; title: string }[] = [
-  // Add your video IDs here:
-  // { id: 'VIDEO_ID_HERE', title: 'Video Title' },
+const YOUTUBE_VIDEOS = [
+  { id: 'evzVBqHYUvo', title: 'D-Shot - Hot Water' },
+  { id: 'UVS5pG9-xEw', title: 'D-Shot - Ask About Me ft Kokane, Juvenile' },
+  { id: 'eNc0-dO-tKY', title: 'D-Shot Interview - Captain Save A Hoe Story' },
 ];
 
 export async function loader({context}: Route.LoaderArgs) {
