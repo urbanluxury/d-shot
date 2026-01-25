@@ -413,38 +413,18 @@ function YouTubeThumbnail({
   title: string;
   onClick: () => void;
 }) {
-  const [imgError, setImgError] = useState(false);
-
-  // Try different thumbnail sources
-  const thumbnailUrls = [
-    `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-    `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
-    `https://img.youtube.com/vi/${videoId}/0.jpg`,
-  ];
-
   return (
     <button
       onClick={onClick}
-      className="bg-white rounded-lg overflow-hidden shadow-sm text-left w-full group cursor-pointer"
+      className="bg-white rounded-lg overflow-hidden shadow-sm text-left w-full group cursor-pointer block"
     >
-      <div className="aspect-video relative bg-gradient-to-br from-gray-800 to-black">
-        {/* YouTube Thumbnail with fallback */}
-        {!imgError ? (
-          <img
-            src={thumbnailUrls[0]}
-            alt={title}
-            className="w-full h-full object-cover"
-            onError={() => setImgError(true)}
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <FaYoutube className="w-20 h-20 text-red-600" />
-          </div>
-        )}
+      <div className="aspect-video relative bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        {/* Dark gradient background with YouTube branding */}
+        <div className="w-full h-full flex items-center justify-center">
+          <FaYoutube className="w-16 h-16 text-red-600 opacity-30" />
+        </div>
         {/* Play Button Overlay */}
-        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
           <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
             <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
@@ -452,8 +432,9 @@ function YouTubeThumbnail({
           </div>
         </div>
         {/* YouTube Badge */}
-        <div className="absolute top-3 left-3 bg-black/50 rounded px-2 py-1">
-          <FaYoutube className="w-6 h-6 text-red-600" />
+        <div className="absolute top-3 left-3 bg-red-600 rounded px-2 py-1 flex items-center gap-1">
+          <FaYoutube className="w-4 h-4 text-white" />
+          <span className="text-white text-xs font-semibold">YouTube</span>
         </div>
       </div>
       <div className="p-4">
@@ -501,7 +482,7 @@ function VideoModal({
         <h3 className="text-white text-xl font-display uppercase mb-4">{title}</h3>
 
         {/* Video Player */}
-        <div className="aspect-video bg-black rounded-lg overflow-hidden">
+        <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden relative">
           <iframe
             width="100%"
             height="100%"
@@ -512,6 +493,20 @@ function VideoModal({
             allowFullScreen
             className="w-full h-full"
           />
+        </div>
+
+        {/* Fallback Link */}
+        <div className="mt-4 text-center">
+          <p className="text-white/60 text-sm mb-2">Video not loading?</p>
+          <a
+            href={`https://www.youtube.com/watch?v=${videoId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+          >
+            <FaYoutube className="w-5 h-5" />
+            Watch on YouTube
+          </a>
         </div>
       </div>
     </div>
