@@ -39,6 +39,14 @@ const COMPILATION_HANDLES = [
   'amw-the-real-mobb',
 ];
 
+// YouTube Videos from Shot Films Media Inc
+// To add videos: Get the video ID from YouTube URL (the part after watch?v=)
+// Example: https://www.youtube.com/watch?v=ABC123 → id is 'ABC123'
+const YOUTUBE_VIDEOS: { id: string; title: string }[] = [
+  // Add your video IDs here:
+  // { id: 'VIDEO_ID_HERE', title: 'Video Title' },
+];
+
 export async function loader({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
@@ -223,19 +231,35 @@ export default function Music() {
             <p className="text-lg text-black/60">Watch the latest visuals</p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <VideoCard title="Latest Music Video" />
-            <VideoCard title="Behind the Scenes" />
-            <VideoCard title="Studio Session" />
-          </div>
+          {YOUTUBE_VIDEOS.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {YOUTUBE_VIDEOS.map((video, index) => (
+                <YouTubeEmbed key={`${video.id}-${index}`} videoId={video.id} title={video.title} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <a
+                href="https://www.youtube.com/@shotfilmsmediainc.6377"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white rounded-xl p-8 hover:bg-gray-100 transition-colors max-w-2xl mx-auto"
+              >
+                <FaYoutube className="w-16 h-16 text-red-600 mx-auto mb-4" />
+                <h3 className="text-2xl font-display uppercase text-black mb-2">Watch on YouTube</h3>
+                <p className="text-black/60">Check out the latest videos from Shot Films Media</p>
+              </a>
+            </div>
+          )}
 
           <div className="text-center mt-12">
             <a
-              href="https://youtube.com/@dshot"
+              href="https://www.youtube.com/@shotfilmsmediainc.6377"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-dark"
+              className="btn-outline-dark inline-flex items-center gap-2"
             >
+              <FaYoutube className="w-5 h-5" />
               Subscribe on YouTube
             </a>
           </div>
@@ -364,15 +388,23 @@ function AlbumCard({
   );
 }
 
-function VideoCard({title}: {title: string}) {
+function YouTubeEmbed({videoId, title}: {videoId: string; title: string}) {
   return (
-    <div className="group bg-gray-100 rounded-lg overflow-hidden cursor-pointer">
-      <div className="aspect-video bg-gray-200 flex items-center justify-center relative">
-        <span className="text-5xl text-gray-400">▶️</span>
-        <div className="absolute inset-0 bg-merlot/0 group-hover:bg-merlot/20 transition-colors" />
+    <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+      <div className="aspect-video">
+        <iframe
+          width="100%"
+          height="100%"
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title={title}
+          style={{ border: 0 }}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="w-full h-full"
+        />
       </div>
       <div className="p-4">
-        <h4 className="text-lg font-display uppercase text-black group-hover:text-merlot transition-colors">
+        <h4 className="text-lg font-display uppercase text-black">
           {title}
         </h4>
       </div>
