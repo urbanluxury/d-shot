@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Link, useLoaderData} from 'react-router';
 import type {Route} from './+types/music';
 import {PageHero} from '~/components/PageHero';
@@ -89,9 +90,18 @@ function extractYear(product: any): number {
 
 export default function Music() {
   const {soloAlbums, clickAlbums, compilations} = useLoaderData<typeof loader>();
+  const [activeVideo, setActiveVideo] = useState<{id: string; title: string} | null>(null);
 
   return (
     <div className="music-page bg-white">
+      {/* Video Modal */}
+      {activeVideo && (
+        <VideoModal
+          videoId={activeVideo.id}
+          title={activeVideo.title}
+          onClose={() => setActiveVideo(null)}
+        />
+      )}
       <PageHero
         title="Music"
         subtitle="The Sound of the Bay"
@@ -235,7 +245,12 @@ export default function Music() {
           {YOUTUBE_VIDEOS.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {YOUTUBE_VIDEOS.map((video, index) => (
-                <YouTubeEmbed key={`${video.id}-${index}`} videoId={video.id} title={video.title} />
+                <YouTubeThumbnail
+                  key={`${video.id}-${index}`}
+                  videoId={video.id}
+                  title={video.title}
+                  onClick={() => setActiveVideo(video)}
+                />
               ))}
             </div>
           ) : (
@@ -389,25 +404,97 @@ function AlbumCard({
   );
 }
 
-function YouTubeEmbed({videoId, title}: {videoId: string; title: string}) {
+function YouTubeThumbnail({
+  videoId,
+  title,
+  onClick,
+}: {
+  videoId: string;
+  title: string;
+  onClick: () => void;
+}) {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm">
-      <div className="aspect-video">
-        <iframe
-          width="100%"
-          height="100%"
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title={title}
-          style={{ border: 0 }}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          className="w-full h-full"
+    <button
+      onClick={onClick}
+      className="bg-white rounded-lg overflow-hidden shadow-sm text-left w-full group cursor-pointer"
+    >
+      <div className="aspect-video relative">
+        {/* YouTube Thumbnail */}
+        <img
+          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+          alt={title}
+          className="w-full h-full object-cover"
         />
+        {/* Play Button Overlay */}
+        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+          <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+            <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+        {/* YouTube Badge */}
+        <div className="absolute top-3 left-3">
+          <FaYoutube className="w-8 h-8 text-red-600 drop-shadow-lg" />
+        </div>
       </div>
       <div className="p-4">
-        <h4 className="text-lg font-display uppercase text-black">
+        <h4 className="text-lg font-display uppercase text-black group-hover:text-merlot transition-colors">
           {title}
         </h4>
+      </div>
+    </button>
+  );
+}
+
+function VideoModal({
+  videoId,
+  title,
+  onClose,
+}: {
+  videoId: string;
+  title: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/90" />
+
+      {/* Modal Content */}
+      <div
+        className="relative w-full max-w-5xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white hover:text-champagne transition-colors"
+        >
+          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Video Title */}
+        <h3 className="text-white text-xl font-display uppercase mb-4">{title}</h3>
+
+        {/* Video Player */}
+        <div className="aspect-video bg-black rounded-lg overflow-hidden">
+          <iframe
+            width="100%"
+            height="100%"
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+            title={title}
+            style={{ border: 0 }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="w-full h-full"
+          />
+        </div>
       </div>
     </div>
   );
