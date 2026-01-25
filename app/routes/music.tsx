@@ -413,18 +413,36 @@ function YouTubeThumbnail({
   title: string;
   onClick: () => void;
 }) {
+  const [imgError, setImgError] = useState(false);
+
+  // Try different thumbnail sources
+  const thumbnailUrls = [
+    `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
+    `https://img.youtube.com/vi/${videoId}/0.jpg`,
+  ];
+
   return (
     <button
       onClick={onClick}
       className="bg-white rounded-lg overflow-hidden shadow-sm text-left w-full group cursor-pointer"
     >
-      <div className="aspect-video relative">
-        {/* YouTube Thumbnail */}
-        <img
-          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          alt={title}
-          className="w-full h-full object-cover"
-        />
+      <div className="aspect-video relative bg-gradient-to-br from-gray-800 to-black">
+        {/* YouTube Thumbnail with fallback */}
+        {!imgError ? (
+          <img
+            src={thumbnailUrls[0]}
+            alt={title}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <FaYoutube className="w-20 h-20 text-red-600" />
+          </div>
+        )}
         {/* Play Button Overlay */}
         <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center">
           <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
@@ -434,8 +452,8 @@ function YouTubeThumbnail({
           </div>
         </div>
         {/* YouTube Badge */}
-        <div className="absolute top-3 left-3">
-          <FaYoutube className="w-8 h-8 text-red-600 drop-shadow-lg" />
+        <div className="absolute top-3 left-3 bg-black/50 rounded px-2 py-1">
+          <FaYoutube className="w-6 h-6 text-red-600" />
         </div>
       </div>
       <div className="p-4">
