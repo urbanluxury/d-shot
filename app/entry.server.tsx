@@ -19,6 +19,20 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    imgSrc: [
+      "'self'",
+      'data:',
+      'https://cdn.shopify.com',
+      'https://i.ytimg.com',
+      'https://img.youtube.com',
+      'https://*.ytimg.com',
+      'https://*.youtube.com',
+    ],
+    frameSrc: [
+      "'self'",
+      'https://www.youtube.com',
+      'https://youtube.com',
+    ],
   });
 
   const body = await renderToReadableStream(
